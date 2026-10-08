@@ -189,6 +189,7 @@ input:focus{
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -288,73 +289,19 @@ input:focus{
 
 
 <script>
-
 function togglePassword(){
-
-    const password =
-        document.getElementById("password");
-
-    const button =
-        document.querySelector(".show-password");
-
-    if(password.type === "password"){
-
-        password.type = "text";
-        button.textContent = "Hide";
-
-    }else{
-
-        password.type = "password";
-        button.textContent = "Show";
-
-    }
-
+ const p=document.getElementById("password"),b=document.querySelector(".show-password");
+ p.type=p.type==="password"?"text":"password"; b.textContent=p.type==="password"?"Show":"Hide";
 }
-
-
-document
-.getElementById("loginForm")
-.addEventListener("submit", function(event){
-
-    event.preventDefault();
-
-    const email =
-        document.getElementById("email").value.trim();
-
-    const password =
-        document.getElementById("password").value;
-
-    const message =
-        document.getElementById("message");
-
-
-    if(!email || !password){
-
-        message.textContent =
-            "Please enter your email and password.";
-
-        message.className =
-            "message error";
-
-        message.style.display =
-            "block";
-
-        return;
-
-    }
-
-
-    message.textContent =
-        "Login form ready. Connect this form to the backend authentication system.";
-
-    message.className =
-        "message success";
-
-    message.style.display =
-        "block";
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+document.getElementById("loginForm").addEventListener("submit",async function(e){
+ e.preventDefault();
+ const message=document.getElementById("message"),email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
+ if(!email||!password){message.textContent="Please enter your email and password.";message.className="message error";message.style.display="block";return;}
+ const {error}=await window.supabaseClient.auth.signInWithPassword({email,password});
+ if(error){message.textContent=error.message;message.className="message error";message.style.display="block";return;}
+ window.location.href="dashboard.html";
 });
-
 </script>
 
 </body>
