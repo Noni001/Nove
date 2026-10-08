@@ -240,6 +240,7 @@ input:focus{
 
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -443,70 +444,25 @@ input:focus{
 
 
 <script>
-
-const typeFilter =
-    document.getElementById("typeFilter");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-
-typeFilter.addEventListener(
-    "change",
-    filterTransactions
-);
-
-searchInput.addEventListener(
-    "input",
-    filterTransactions
-);
-
-
-function filterTransactions(){
-
-    /*
-        Transaction data will be loaded from the
-        authenticated backend in the production version.
-
-        This function is intentionally left ready
-        for the backend transaction ledger.
-    */
-
-    console.log(
-        "Transaction filter:",
-        typeFilter.value,
-        searchInput.value
-    );
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+var transactionData=[];
+async function loadTransactions(){
+ var s=await window.supabaseClient.auth.getUser(); if(!s.data.user){location.href="login.html";return;}
+ var r=await window.supabaseClient.from("transactions").select("*").eq("user_id",s.data.user.id).order("created_at",{ascending:false});
+ transactionData=r.data||[];
+ renderTransactions();
 }
-
-
-function supportMessage(){
-
-    alert(
-        "NovaVest Support\n\n" +
-        "Support chat will be connected to the support system in the final version."
-    );
-
+function renderTransactions(){
+ var list=document.getElementById("transactionList"),type=document.getElementById("typeFilter").value,search=document.getElementById("searchInput").value.toLowerCase();
+ var rows=transactionData.filter(function(x){var t=type==="all"||x.type===type;var q=!search||((x.description||"")+" "+(x.reference||"")).toLowerCase().includes(search);return t&&q;});
+ if(!rows.length){list.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>No matching transactions.</p></div>';return;}
+ list.innerHTML=rows.map(function(x){return '<div class="row" style="padding:14px 0;border-bottom:1px solid #eee"><div><strong>'+x.type+'</strong><br><small>'+(x.description||"")+' · '+new Date(x.created_at).toLocaleString()+'</small></div><strong>'+(Number(x.amount)>=0?"+":"-")+'$'+Math.abs(Number(x.amount)).toFixed(2)+'</strong></div>';}).join("");
 }
-
-
-function openMenu(){
-
-    alert(
-        "NovaVest Menu\n\n" +
-        "Profile\n" +
-        "KYC Verification\n" +
-        "Referrals\n" +
-        "Crypto Loan\n" +
-        "Crypto Card\n" +
-        "U2U Transfer\n" +
-        "Settings"
-    );
-
-}
-
+document.getElementById("typeFilter").addEventListener("change",renderTransactions);
+document.getElementById("searchInput").addEventListener("input",renderTransactions);
+function supportMessage(){alert("NovaVest Support will be connected next.");}
+function openMenu(){alert("NovaVest Menu will be connected next.");}
+loadTransactions();
 </script>
-
 </body>
 </html>
