@@ -356,6 +356,7 @@ body{
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -796,24 +797,38 @@ body{
 
 
 <script>
-
-function openMenu(){
-
-    alert(
-        "Menu will be connected to the full navigation system."
-    );
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+function money(v){return "$"+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+async function loadDashboard(){
+ const {data:{user}}=await window.supabaseClient.auth.getUser();
+ if(!user){window.location.href="login.html";return;}
+ const [p,w,d,wd,n]=await Promise.all([
+  window.supabaseClient.from("profiles").select("full_name").eq("id",user.id).maybeSingle(),
+  window.supabaseClient.from("wallets").select("*").eq("user_id",user.id).maybeSingle(),
+  window.supabaseClient.from("deposits").select("amount,status").eq("user_id",user.id),
+  window.supabaseClient.from("withdrawals").select("amount,status").eq("user_id",user.id),
+  window.supabaseClient.from("notifications").select("id").eq("user_id",user.id).eq("is_read",false)
+ ]);
+ const first=(p.data?.full_name||user.email?.split("@")[0]||"Investor").split(" ")[0];
+ document.querySelector(".welcome h1").textContent="Hello, "+first+" 👋";
+ const wallet=w.data||{};
+ document.querySelector(".balance-value").textContent=money(wallet.balance);
+ document.querySelector(".balance-change").textContent=Number(wallet.promotional_credits||0)>0?"Includes promotional credits":"Live account balance";
+ const deposits=d.data||[], withdrawals=wd.data||[];
+ const approvedDep=deposits.filter(x=>x.status==="approved").reduce((s,x)=>s+Number(x.amount||0),0);
+ const pendingDep=deposits.filter(x=>x.status==="pending").reduce((s,x)=>s+Number(x.amount||0),0);
+ const pendingWd=withdrawals.filter(x=>x.status==="pending").reduce((s,x)=>s+Number(x.amount||0),0);
+ const approvedWd=withdrawals.filter(x=>x.status==="approved").reduce((s,x)=>s+Number(x.amount||0),0);
+ const values=[approvedDep,0,0,pendingDep,pendingWd,approvedWd,Number(wallet.promotional_credits||0),0,approvedDep];
+ document.querySelectorAll(".stat-value").forEach((el,i)=>el.textContent=money(values[i]));
+ const badge=document.querySelector(".notification-badge");
+ badge.textContent=String(n.data?.length||0);
+ badge.style.display=n.data?.length?"flex":"none";
+ document.querySelector(".status").innerHTML="<strong>Account connected</strong><br>Your NovaVest account is securely connected to your account data.";
 }
-
-
-function supportMessage(){
-
-    alert(
-        "Support chat will be connected here."
-    );
-
-}
-
+function openMenu(){alert("Menu navigation will be connected next.");}
+function supportMessage(){alert("Support will be connected next.");}
+loadDashboard();
 </script>
 
 
