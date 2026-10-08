@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Account Adjustments - NovaVest Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);</script>
 
 <style>
 *{
@@ -636,14 +639,14 @@ label{
 
 
         <label>
-          Username / User ID
+          User ID (UUID)
         </label>
 
         <input
           type="text"
           id="username"
           class="input"
-          placeholder="@username or user ID"
+          placeholder="Paste the user UUID"
         >
 
 
@@ -656,15 +659,15 @@ label{
           class="select"
         >
 
-          <option value="promotional">
+          <option value="promotional_credit">
             Promotional Credit
           </option>
 
-          <option value="demo">
+          <option value="demo_credit">
             Demo Credit
           </option>
 
-          <option value="bonus">
+          <option value="adjustment_credit">
             Bonus
           </option>
 
@@ -672,7 +675,7 @@ label{
             Refund
           </option>
 
-          <option value="administrative">
+          <option value="adjustment_credit">
             Administrative Adjustment
           </option>
 
@@ -718,7 +721,7 @@ label{
 
         <button
           class="primary-button"
-          onclick="createAdjustment()"
+          onclick="createLiveAdjustment()"
         >
           Create Adjustment
         </button>
@@ -1062,111 +1065,46 @@ function showNotifications(){
 }
 
 
-function createAdjustment(){
 
-  const username =
-    document
-      .getElementById("username")
-      .value
-      .trim();
+async function createLiveAdjustment(){
+  const userId=document.getElementById("username").value.trim();
+  const type=document.getElementById("adjustmentType").value;
+  const amount=Number(document.getElementById("amount").value);
+  const reason=document.getElementById("reason").value.trim();
+  const reference=document.getElementById("reference").value.trim();
 
-  const type =
-    document
-      .getElementById("adjustmentType")
-      .value;
+  if(!userId){ alert("Enter the user's UUID."); return; }
+  if(!Number.isFinite(amount) || amount<=0){ alert("Enter a valid adjustment amount."); return; }
+  if(!reason){ alert("Enter the reason for the adjustment."); return; }
 
-  const amount =
-    document
-      .getElementById("amount")
-      .value;
+  const confirmed=confirm("Create this legitimate account adjustment?\n\nUser ID: "+userId+"\nType: "+type+"\nAmount: $"+amount.toFixed(2)+"\nReason: "+reason+(reference?"\nReference: "+reference:""));
+  if(!confirmed) return;
 
-  const reason =
-    document
-      .getElementById("reason")
-      .value
-      .trim();
+  const {data:{session}}=await window.supabaseClient.auth.getSession();
+  if(!session){ alert("Your admin session has expired. Please log in again."); window.location.href="admin-login.html"; return; }
 
-  const reference =
-    document
-      .getElementById("reference")
-      .value
-      .trim();
-
-
-  if(username === ""){
-
-    alert(
-      "Enter a username or user ID."
-    );
-
-    return;
-
+  try{
+    const res=await fetch("https://brjcxksvpuasywlxhrgg.supabase.co/functions/v1/admin-account-adjustment",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},
+      body:JSON.stringify({user_id:userId,adjustment_type:type,amount:amount,reason:reason+(reference?" [Ref: "+reference+"]":"")})
+    });
+    const body=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(body.error||"Adjustment request failed.");
+    alert("Adjustment created successfully and recorded in the audit log.");
+    window.location.reload();
+  }catch(err){
+    alert(err.message||"Unable to create adjustment.");
   }
-
-
-  if(amount === "" || Number(amount) <= 0){
-
-    alert(
-      "Enter a valid adjustment amount."
-    );
-
-    return;
-
-  }
-
-
-  if(reason === ""){
-
-    alert(
-      "Enter the reason for the adjustment."
-    );
-
-    return;
-
-  }
-
-
-  const confirmed =
-    confirm(
-      "Create this legitimate account adjustment?\n\n" +
-      "User: " + username +
-      "\nType: " + type +
-      "\nAmount: $" + Number(amount).toFixed(2) +
-      "\nReason: " + reason +
-      (reference ? "\nReference: " + reference : "")
-    );
-
-
-  if(!confirmed){
-    return;
-  }
-
-
-  alert(
-    "Demo action only.\n\n" +
-    "No real account balance has been changed.\n\n" +
-    "The production backend will require administrator authorization and create an audit record."
-  );
-
 }
 
 
-function logoutAdmin(){
 
-  const confirmed =
-    confirm(
-      "Are you sure you want to log out of the admin panel?"
-    );
-
-  if(confirmed){
-
-    localStorage.removeItem("nova_admin_session");
-
-    window.location.href =
-      "admin-login.html";
-
-  }
-
+async function logoutAdmin(){
+  const confirmed=confirm("Are you sure you want to log out of the admin panel?");
+  if(!confirmed) return;
+  await window.supabaseClient.auth.signOut();
+  window.location.href="admin-login.html";
 }
 
 </script>
