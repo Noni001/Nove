@@ -892,68 +892,36 @@
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
-
-  function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("open");
-  }
-
-
-  function saveSettings(section) {
-
-    const success = document.getElementById("successMessage");
-
-    if (success) {
-      success.style.display = "block";
-      success.textContent =
-        section + " saved locally for this frontend demo.";
-
-      setTimeout(() => {
-        success.style.display = "none";
-      }, 3000);
-    }
-
-    alert(
-      section +
-      " saved locally for the demo. Production settings will be connected to the secure backend."
-    );
-  }
-
-
-  function clearDemoSettings() {
-
-    const confirmed = confirm(
-      "Reset the frontend demo settings?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    localStorage.clear();
-
-    alert(
-      "Demo settings have been reset locally."
-    );
-
-    location.reload();
-  }
-
-
-  function adminLogout() {
-
-    const confirmed = confirm(
-      "Log out of the admin area?"
-    );
-
-    if (!confirmed) {
-      event.preventDefault();
-      return false;
-    }
-
-    return true;
-  }
-
+const supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function requireAdmin(){
+ const {data:{user}}=await supabaseClient.auth.getUser();
+ if(!user){location.href="admin-login.html";return null;}
+ const {data,error}=await supabaseClient.from("profiles").select("role").eq("id",user.id).single();
+ if(error||data.role!=="admin"){location.href="dashboard.html";return null;}
+ return user;
+}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
+async function saveSettings(section){
+ const user=await requireAdmin(); if(!user)return;
+ let key="", value=null;
+ if(section==="Announcement"){key="announcement";value={value:document.getElementById("announcement").value.trim()};}
+ else if(section==="Platform"){key="platform_mode";value={value:document.getElementById("platformMode")?.value||"demo"};}
+ else return;
+ const {data:{session}}=await supabaseClient.auth.getSession();
+ const res=await fetch("https://brjcxksvpuasywlxhrgg.supabase.co/functions/v1/admin-set-site-setting",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({key,value})});
+ const body=await res.json().catch(()=>({}));
+ const el=document.getElementById("successMessage"); el.style.display="block"; el.textContent=res.ok?"Settings saved securely.":(body.error||"Unable to save settings."); setTimeout(()=>el.style.display="none",3000);
+}
+async function loadSettings(){
+ const user=await requireAdmin(); if(!user)return;
+ const {data}=await supabaseClient.from("site_settings").select("key,value");
+ (data||[]).forEach(s=>{if(s.key==="announcement"&&document.getElementById("announcement"))document.getElementById("announcement").value=s.value?.value||"";});
+}
+async function adminLogout(){await supabaseClient.auth.signOut();location.href="admin-login.html";}
+loadSettings();
 </script>
 
 </body>
