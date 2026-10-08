@@ -331,6 +331,7 @@ body{
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -402,13 +403,9 @@ body{
             Available balance
         </div>
 
-        <div class="amount">
-            $0.00
-        </div>
+        <div class="amount" id="mainBalance">$0.00</div>
 
-        <div class="wallet-status">
-            ● Demo account
-        </div>
+        <div class="wallet-status" id="walletStatus">● Loading account...</div>
 
     </div>
 
@@ -510,9 +507,7 @@ body{
                 Total balance
             </span>
 
-            <strong>
-                $0.00
-            </strong>
+            <strong id="totalBalance">$0.00</strong>
 
         </div>
 
@@ -523,9 +518,7 @@ body{
                 Available balance
             </span>
 
-            <strong>
-                $0.00
-            </strong>
+            <strong id="availableBalance">$0.00</strong>
 
         </div>
 
@@ -536,9 +529,7 @@ body{
                 Active deposit
             </span>
 
-            <strong>
-                $0.00
-            </strong>
+            <strong id="activeDeposit">$0.00</strong>
 
         </div>
 
@@ -549,9 +540,7 @@ body{
                 Pending deposit
             </span>
 
-            <strong>
-                $0.00
-            </strong>
+            <strong id="pendingDeposit">$0.00</strong>
 
         </div>
 
@@ -562,9 +551,7 @@ body{
                 Pending withdrawal
             </span>
 
-            <strong>
-                $0.00
-            </strong>
+            <strong id="pendingWithdrawal">$0.00</strong>
 
         </div>
 
@@ -665,17 +652,30 @@ body{
 
 
 <script>
-
-function openMenu(){
-
-    alert(
-        "The full navigation menu will be connected as we continue building the application."
-    );
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function loadWallet(){
+ const auth=await window.supabaseClient.auth.getUser();
+ if(!auth.data.user){location.href="login.html";return;}
+ const uid=auth.data.user.id;
+ const w=await window.supabaseClient.from("wallets").select("*").eq("user_id",uid).single();
+ if(w.error){document.getElementById("walletStatus").textContent="● Wallet not initialized";return;}
+ const wallet=w.data||{}, balance=Number(wallet.balance||0), promo=Number(wallet.promotional_credits||0);
+ document.getElementById("mainBalance").textContent="$"+balance.toFixed(2);
+ document.getElementById("totalBalance").textContent="$"+balance.toFixed(2);
+ document.getElementById("availableBalance").textContent="$"+balance.toFixed(2);
+ document.getElementById("walletStatus").textContent=promo>0?"● Active account · Promotional credits: $"+promo.toFixed(2):"● Active account";
+ const d=await window.supabaseClient.from("deposits").select("amount,status").eq("user_id",uid);
+ const wd=await window.supabaseClient.from("withdrawals").select("amount,status").eq("user_id",uid);
+ const deposits=d.data||[], withdrawals=wd.data||[];
+ const active=deposits.filter(x=>x.status==="approved").reduce((s,x)=>s+Number(x.amount||0),0);
+ const pendingD=deposits.filter(x=>x.status==="pending").reduce((s,x)=>s+Number(x.amount||0),0);
+ const pendingW=withdrawals.filter(x=>x.status==="pending").reduce((s,x)=>s+Number(x.amount||0),0);
+ document.getElementById("activeDeposit").textContent="$"+active.toFixed(2);
+ document.getElementById("pendingDeposit").textContent="$"+pendingD.toFixed(2);
+ document.getElementById("pendingWithdrawal").textContent="$"+pendingW.toFixed(2);
 }
-
+loadWallet();
+function openMenu(){alert("NovaVest Menu will be connected next.");}
 </script>
-
-
 </body>
 </html>
