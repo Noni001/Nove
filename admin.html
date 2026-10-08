@@ -453,6 +453,7 @@ body{
 
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -608,13 +609,7 @@ body{
           Total Users
         </div>
 
-        <div class="stat-value">
-          0
-        </div>
-
-        <div class="stat-note">
-          Awaiting backend data
-        </div>
+        <div class="stat-value" id="totalUsers">0</div><div class="stat-note">Registered accounts</div>
 
       </div>
 
@@ -629,13 +624,7 @@ body{
           Pending KYC
         </div>
 
-        <div class="stat-value">
-          0
-        </div>
-
-        <div class="stat-note">
-          Awaiting review
-        </div>
+        <div class="stat-value" id="pendingKyc">0</div><div class="stat-note">KYC status review</div>
 
       </div>
 
@@ -650,13 +639,7 @@ body{
           Pending Deposits
         </div>
 
-        <div class="stat-value">
-          0
-        </div>
-
-        <div class="stat-note">
-          Awaiting processing
-        </div>
+        <div class="stat-value" id="pendingDeposits">0</div><div class="stat-note">Awaiting processing</div>
 
       </div>
 
@@ -671,13 +654,7 @@ body{
           Pending Withdrawals
         </div>
 
-        <div class="stat-value">
-          0
-        </div>
-
-        <div class="stat-note">
-          Awaiting processing
-        </div>
+        <div class="stat-value" id="pendingWithdrawals">0</div><div class="stat-note">Awaiting processing</div>
 
       </div>
 
@@ -1024,44 +1001,24 @@ body{
 
 
 <script>
-
-function toggleMobileMenu(){
-
-  const menu =
-    document.getElementById("mobileMenu");
-
-  menu.classList.toggle("open");
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function loadAdmin(){
+ const a=await supabaseClient.auth.getUser(); if(!a.data.user){location.href="admin-login.html";return}
+ const p=await supabaseClient.from("profiles").select("role").eq("id",a.data.user.id).single();
+ if(p.error||p.data?.role!=="admin"){alert("Administrator access required.");location.href="dashboard.html";return}
+ const u=await supabaseClient.from("profiles").select("id",{count:"exact",head:true});
+ const d=await supabaseClient.from("deposits").select("id",{count:"exact",head:true}).eq("status","pending");
+ const w=await supabaseClient.from("withdrawals").select("id",{count:"exact",head:true}).eq("status","pending");
+ document.getElementById("totalUsers").textContent=u.count||0;
+ document.getElementById("pendingDeposits").textContent=d.count||0;
+ document.getElementById("pendingWithdrawals").textContent=w.count||0;
+ document.getElementById("pendingKyc").textContent="—";
+ document.querySelector(".notice").innerHTML="<strong>Live backend:</strong> User, deposit and withdrawal counts are now loaded from Supabase. Financial approvals and account adjustments must remain server-side and auditable.";
 }
-
-
-function showNotifications(){
-
-  alert(
-    "There are currently no backend notifications.\n\n" +
-    "The notification system will be connected later."
-  );
-
-}
-
-
-function logoutAdmin(){
-
-  const confirmed =
-    confirm("Are you sure you want to log out of the admin panel?");
-
-  if(confirmed){
-
-    localStorage.removeItem("nova_admin_session");
-
-    window.location.href =
-      "admin-login.html";
-
-  }
-
-}
-
+function toggleMobileMenu(){document.getElementById("mobileMenu").classList.toggle("open")}
+function showNotifications(){location.href="admin-notifications.html"}
+async function logoutAdmin(){await supabaseClient.auth.signOut();location.href="admin-login.html"}
+loadAdmin();
 </script>
-
 </body>
 </html>
