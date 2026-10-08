@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - NovaVest</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f7fa;
+  color:#0d1b2a;
+  min-height:100vh;
+  padding-bottom:90px;
+}
+
+.header{
+  background:#0a111e;
+  color:white;
+  padding:18px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10b981;
+}
+
+.header button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.page-title{
+  font-size:27px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  color:#6b7280;
+  font-size:14px;
+  margin-bottom:22px;
+}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.card h2{
+  font-size:17px;
+  margin-bottom:16px;
+}
+
+.setting-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:15px 0;
+  border-bottom:1px solid #edf0f3;
+}
+
+.setting-row:last-child{
+  border-bottom:none;
+  padding-bottom:0;
+}
+
+.setting-info{
+  flex:1;
+}
+
+.setting-title{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.setting-description{
+  color:#737b87;
+  font-size:12px;
+  line-height:1.4;
+}
+
+input[type="checkbox"]{
+  appearance:none;
+  width:48px;
+  height:27px;
+  background:#d1d5db;
+  border-radius:20px;
+  position:relative;
+  cursor:pointer;
+  transition:.2s;
+  flex-shrink:0;
+}
+
+input[type="checkbox"]::before{
+  content:"";
+  width:21px;
+  height:21px;
+  background:white;
+  border-radius:50%;
+  position:absolute;
+  top:3px;
+  left:3px;
+  transition:.2s;
+  box-shadow:0 2px 5px rgba(0,0,0,.2);
+}
+
+input[type="checkbox"]:checked{
+  background:#10b981;
+}
+
+input[type="checkbox"]:checked::before{
+  left:24px;
+}
+
+.select-box{
+  width:125px;
+  padding:9px;
+  border:1px solid #dce1e7;
+  border-radius:9px;
+  background:white;
+  font-size:13px;
+}
+
+.action-button{
+  display:block;
+  width:100%;
+  border:none;
+  border-radius:11px;
+  padding:13px;
+  background:#10b981;
+  color:white;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.secondary-button{
+  display:block;
+  width:100%;
+  border:1px solid #d8dde4;
+  border-radius:11px;
+  padding:13px;
+  background:white;
+  color:#0d1b2a;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.danger{
+  color:#dc2626;
+}
+
+.danger-button{
+  display:block;
+  width:100%;
+  border:1px solid #fecaca;
+  border-radius:11px;
+  padding:13px;
+  background:#fff5f5;
+  color:#dc2626;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.info-box{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1e40af;
+  padding:13px;
+  border-radius:11px;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:12px;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:70px;
+  background:#0a111e;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:50;
+  box-shadow:0 -4px 15px rgba(0,0,0,.15);
+}
+
+.nav-item{
+  color:#9ca3af;
+  text-decoration:none;
+  text-align:center;
+  font-size:10px;
+  min-width:55px;
+}
+
+.nav-item .icon{
+  display:block;
+  font-size:20px;
+  margin-bottom:3px;
+}
+
+.nav-item.active{
+  color:#10b981;
+}
+
+.support{
+  position:fixed;
+  right:18px;
+  bottom:84px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:#f97316;
+  color:white;
+  border:none;
+  font-size:23px;
+  box-shadow:0 5px 15px rgba(0,0,0,.2);
+  z-index:40;
+}
+
+@media(min-width:700px){
+  .container{
+    padding-top:30px;
+  }
+
+  .bottom-nav{
+    left:50%;
+    transform:translateX(-50%);
+    width:700px;
+    border-radius:18px 18px 0 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <button onclick="goBack()">←</button>
+
+  <div class="logo">
+    Nova<span>Vest</span>
+  </div>
+
+  <button onclick="showNotifications()">🔔</button>
+</header>
+
+<main class="container">
+
+  <h1 class="page-title">Settings</h1>
+  <p class="subtitle">
+    Manage your account preferences and security.
+  </p>
+
+  <!-- PREFERENCES -->
+  <section class="card">
+    <h2>Preferences</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Email Notifications</div>
+        <div class="setting-description">
+          Receive important account and transaction updates.
+        </div>
+      </div>
+
+      <input type="checkbox" id="emailNotifications" checked>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Transaction Alerts</div>
+        <div class="setting-description">
+          Get notified when transactions are recorded on your account.
+        </div>
+      </div>
+
+      <input type="checkbox" id="transactionAlerts" checked>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Security Alerts</div>
+        <div class="setting-description">
+          Receive notifications about important security events.
+        </div>
+      </div>
+
+      <input type="checkbox" id="securityAlerts" checked>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Language</div>
+        <div class="setting-description">
+          Choose your preferred language.
+        </div>
+      </div>
+
+      <select class="select-box" id="language">
+        <option>English</option>
+      </select>
+    </div>
+
+    <button class="action-button" onclick="savePreferences()">
+      Save Preferences
+    </button>
+  </section>
+
+
+  <!-- SECURITY -->
+  <section class="card">
+    <h2>Security</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Two-Factor Authentication</div>
+        <div class="setting-description">
+          Add an additional security layer to your account.
+        </div>
+      </div>
+
+      <input type="checkbox" id="twoFactor">
+    </div>
+
+    <button class="secondary-button" onclick="changePassword()">
+      Change Password
+    </button>
+
+    <div class="info-box">
+      For the production version, password changes and two-factor
+      authentication must be handled securely by the backend.
+    </div>
+  </section>
+
+
+  <!-- ACCOUNT -->
+  <section class="card">
+    <h2>Account</h2>
+
+    <button class="secondary-button" onclick="window.location.href='profile.html'">
+      👤 Edit Profile
+    </button>
+
+    <button class="secondary-button" onclick="window.location.href='kyc.html'">
+      🛡️ Verification / KYC
+    </button>
+
+    <button class="secondary-button" onclick="window.location.href='transactions.html'">
+      📋 Transaction History
+    </button>
+  </section>
+
+
+  <!-- SESSION -->
+  <section class="card">
+    <h2>Session</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Current Session</div>
+        <div class="setting-description">
+          You are currently signed in to this NovaVest account.
+        </div>
+      </div>
+    </div>
+
+    <button class="danger-button" onclick="logout()">
+      Log Out
+    </button>
+  </section>
+
+
+  <!-- ACCOUNT ACTIONS -->
+  <section class="card">
+    <h2 class="danger">Account Actions</h2>
+
+    <p style="font-size:13px;color:#737b87;line-height:1.5;">
+      Account deletion is a permanent action. In the production
+      application, this request should require secure authentication
+      and confirmation.
+    </p>
+
+    <button class="danger-button" onclick="requestDeletion()">
+      Request Account Deletion
+    </button>
+  </section>
+
+</main>
+
+
+<!-- SUPPORT -->
+<button class="support" onclick="openSupport()">💬</button>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+
+  <a href="dashboard.html" class="nav-item">
+    <span class="icon">⌂</span>
+    Home
+  </a>
+
+  <a href="wallet.html" class="nav-item">
+    <span class="icon">◉</span>
+    Wallet
+  </a>
+
+  <a href="deposit.html" class="nav-item">
+    <span class="icon">＋</span>
+    Deposit
+  </a>
+
+  <a href="withdraw.html" class="nav-item">
+    <span class="icon">↗</span>
+    Withdraw
+  </a>
+
+  <a href="transactions.html" class="nav-item">
+    <span class="icon">☷</span>
+    History
+  </a>
+
+  <a href="settings.html" class="nav-item active">
+    <span class="icon">⚙</span>
+    Settings
+  </a>
+
+</nav>
+
+
+<script>
+
+function goBack(){
+  if(document.referrer){
+    history.back();
+  }else{
+    window.location.href="dashboard.html";
+  }
+}
+
+function showNotifications(){
+  alert("No new notifications.");
+}
+
+function savePreferences(){
+
+  localStorage.setItem(
+    "nova_email_notifications",
+    document.getElementById("emailNotifications").checked
+  );
+
+  localStorage.setItem(
+    "nova_transaction_alerts",
+    document.getElementById("transactionAlerts").checked
+  );
+
+  localStorage.setItem(
+    "nova_security_alerts",
+    document.getElementById("securityAlerts").checked
+  );
+
+  localStorage.setItem(
+    "nova_two_factor",
+    document.getElementById("twoFactor").checked
+  );
+
+  localStorage.setItem(
+    "nova_language",
+    document.getElementById("language").value
+  );
+
+  alert("Preferences saved successfully.");
+}
+
+function loadPreferences(){
+
+  const email =
+    localStorage.getItem("nova_email_notifications");
+
+  const transactions =
+    localStorage.getItem("nova_transaction_alerts");
+
+  const security =
+    localStorage.getItem("nova_security_alerts");
+
+  const twoFactor =
+    localStorage.getItem("nova_two_factor");
+
+  const language =
+    localStorage.getItem("nova_language");
+
+  if(email !== null){
+    document.getElementById("emailNotifications").checked =
+      email === "true";
+  }
+
+  if(transactions !== null){
+    document.getElementById("transactionAlerts").checked =
+      transactions === "true";
+  }
+
+  if(security !== null){
+    document.getElementById("securityAlerts").checked =
+      security === "true";
+  }
+
+  if(twoFactor !== null){
+    document.getElementById("twoFactor").checked =
+      twoFactor === "true";
+  }
+
+  if(language !== null){
+    document.getElementById("language").value = language;
+  }
+}
+
+function changePassword(){
+
+  alert(
+    "Password change will be connected to the secure backend authentication system."
+  );
+
+}
+
+function logout(){
+
+  const confirmLogout =
+    confirm("Are you sure you want to log out?");
+
+  if(confirmLogout){
+
+    localStorage.removeItem("nova_session");
+
+    window.location.href="login.html";
+  }
+
+}
+
+function requestDeletion(){
+
+  const confirmDelete =
+    confirm(
+      "Are you sure you want to request account deletion?"
+    );
+
+  if(confirmDelete){
+
+    alert(
+      "Account deletion request submitted for review."
+    );
+
+  }
+
+}
+
+function openSupport(){
+
+  alert(
+    "NovaVest Support\n\nSupport chat will be connected to the production support system."
+  );
+
+}
+
+loadPreferences();
+
+</script>
+
+</body>
+</html>

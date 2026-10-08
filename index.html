@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NovaVest — Modern Investing</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            height: 70px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0a1628;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #04110c;
+            font-weight: 900;
+        }
+
+        nav {
+            display: none;
+        }
+
+        .login-btn {
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 18px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* HERO */
+        .hero {
+            padding: 75px 20px 50px;
+            text-align: center;
+            background:
+                radial-gradient(circle at top right, rgba(16,185,129,0.16), transparent 35%),
+                radial-gradient(circle at bottom left, rgba(37,99,235,0.12), transparent 35%);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 13px;
+            border-radius: 50px;
+            background: rgba(16,185,129,0.1);
+            color: #34d399;
+            border: 1px solid rgba(16,185,129,0.2);
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: 43px;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero h1 span {
+            color: #10b981;
+        }
+
+        .hero p {
+            color: #aab7c8;
+            line-height: 1.7;
+            max-width: 560px;
+            margin: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background: #10b981;
+            color: #04110c;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+        }
+
+        .secondary-btn {
+            display: inline-block;
+            background: #101e31;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* PREVIEW */
+        .preview {
+            margin: 35px auto;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .dashboard-preview {
+            background: #0d1b2a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            padding: 20px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+        }
+
+        .preview-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .preview-label {
+            color: #8795a8;
+            font-size: 13px;
+        }
+
+        .balance {
+            font-size: 30px;
+            font-weight: 800;
+            margin-top: 7px;
+        }
+
+        .profit {
+            color: #34d399;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .chart {
+            height: 180px;
+            border-radius: 15px;
+            background:
+                linear-gradient(
+                    135deg,
+                    transparent 45%,
+                    rgba(16,185,129,0.7) 46%,
+                    rgba(16,185,129,0.7) 47%,
+                    transparent 48%
+                ),
+                #091625;
+            margin-top: 15px;
+        }
+
+        /* FEATURES */
+        .section {
+            padding: 60px 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-heading h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .section-heading p {
+            color: #8e9caf;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .feature-card {
+            background: #0d1b2a;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 17px;
+            padding: 25px;
+        }
+
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(16,185,129,0.12);
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #8997aa;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* PLANS */
+        .plans {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .plan {
+            background: #0d1b2a;
+            padding: 25px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .plan h3 {
+            margin-bottom: 15px;
+        }
+
+        .plan-price {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .plan p {
+            color: #8997aa;
+            margin: 10px 0 20px;
+        }
+
+        /* CTA */
+        .cta {
+            margin: 30px 20px 70px;
+            padding: 45px 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #0d1b2a, #10253a);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .cta h2 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: #96a3b5;
+            margin-bottom: 25px;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 30px 20px;
+            text-align: center;
+            color: #68778b;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 13px;
+        }
+
+        /* MOBILE */
+        @media (min-width: 700px) {
+
+            nav {
+                display: flex;
+                gap: 28px;
+            }
+
+            nav a {
+                color: #b7c2d0;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+            .hero {
+                padding-top: 110px;
+            }
+
+            .hero h1 {
+                font-size: 65px;
+            }
+
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .plans {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        <div class="logo-icon">N</div>
+        NovaVest
+    </div>
+
+    <nav>
+        <a href="#features">Features</a>
+        <a href="#plans">Plans</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <a href="login.html" class="login-btn">
+        Login
+    </a>
+
+</header>
+
+
+<section class="hero">
+
+    <div class="badge">
+        ● Built for the modern investor
+    </div>
+
+    <h1>
+        Invest smarter.<br>
+        Grow <span>with confidence.</span>
+    </h1>
+
+    <p>
+        A modern digital investment platform designed to give you
+        a simple way to monitor your portfolio, manage your funds
+        and explore investment opportunities.
+    </p>
+
+    <div class="hero-buttons">
+
+        <a href="register.html" class="primary-btn">
+            Start Investing
+        </a>
+
+        <a href="#features" class="secondary-btn">
+            Explore Platform
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="preview">
+
+    <div class="dashboard-preview">
+
+        <div class="preview-top">
+
+            <div>
+                <div class="preview-label">
+                    Portfolio balance
+                </div>
+
+                <div class="balance">
+                    $24,860.00
+                </div>
+
+                <div class="profit">
+                    +8.42% this month
+                </div>
+            </div>
+
+            <div class="preview-label">
+                ● Live
+            </div>
+
+        </div>
+
+        <div class="chart"></div>
+
+    </div>
+
+</section>
+
+
+<section class="section" id="features">
+
+    <div class="section-heading">
+
+        <h2>
+            Everything in one place
+        </h2>
+
+        <p>
+            Powerful tools with a simple experience.
+        </p>
+
+    </div>
+
+
+    <div class="features">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                $
+            </div>
+
+            <h3>
+                Smart Portfolio
+            </h3>
+
+            <p>
+                Monitor your portfolio and account activity
+                from one simple dashboard.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ↗
+            </div>
+
+            <h3>
+                Easy Deposits
+            </h3>
+
+            <p>
+                Access available funding options and manage
+                your account securely.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <h3>
+                Secure Account
+            </h3>
+
+            <p>
+                Account authentication and protected user
+                areas help keep your information secure.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section" id="plans">
+
+    <div class="section-heading">
+
+        <h2>
+            Explore investment plans
+        </h2>
+
+        <p>
+            Example plans for the platform demonstration.
+        </p>
+
+    </div>
+
+
+    <div class="plans">
+
+        <div class="plan">
+
+            <h3>Basic</h3>
+
+            <div class="plan-price">
+                $100
+            </div>
+
+            <p>
+                Starter portfolio
+            </p>
+
+            <a href="register.html" class="primary-btn">
+                Select
+            </a>
+
+        </div>
+
+
+        <div class="plan">
+
+            <h3>Standard</h3>
+
+            <div class="plan-price">
+                $500
+            </div>
+
+            <p>
+                Balanced portfolio
+            </p>
+
+            <a href="register.html" class="primary-btn">
+                Select
+            </a>
+
+        </div>
+
+
+        <div class="plan">
+
+            <h3>Classic</h3>
+
+            <div class="plan-price">
+                $1,000
+            </div>
+
+            <p>
+                Advanced portfolio
+            </p>
+
+            <a href="register.html" class="primary-btn">
+                Select
+            </a>
+
+        </div>
+
+
+        <div class="plan">
+
+            <h3>Premium</h3>
+
+            <div class="plan-price">
+                $5,000
+            </div>
+
+            <p>
+                Premium portfolio
+            </p>
+
+            <a href="register.html" class="primary-btn">
+                Select
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="cta" id="about">
+
+    <h2>
+        Ready to explore NovaVest?
+    </h2>
+
+    <p>
+        Create your account and access your personalized
+        investment dashboard.
+    </p>
+
+    <a href="register.html" class="primary-btn">
+        Create Account
+    </a>
+
+</section>
+
+
+<footer>
+
+    © 2026 NovaVest. Demo platform.
+
+</footer>
+
+</body>
+</html>

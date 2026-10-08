@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wallet — NovaVest</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#101828;
+    padding-bottom:85px;
+}
+
+/* HEADER */
+
+.header{
+    height:68px;
+    background:#07111f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 17px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:800;
+}
+
+.brand-icon{
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:#10b981;
+    color:#03110c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+}
+
+.header-actions{
+    display:flex;
+    gap:13px;
+    align-items:center;
+}
+
+.notification{
+    position:relative;
+    font-size:21px;
+}
+
+.notification-badge{
+    position:absolute;
+    top:-5px;
+    right:-6px;
+    width:16px;
+    height:16px;
+    background:#ef4444;
+    color:white;
+    border-radius:50%;
+    font-size:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.menu-button{
+    width:37px;
+    height:37px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.15);
+    background:#101e31;
+    color:white;
+    font-size:18px;
+}
+
+/* MAIN */
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:20px 15px;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title small{
+    color:#667085;
+}
+
+.page-title h1{
+    font-size:27px;
+    margin-top:5px;
+}
+
+/* BALANCE */
+
+.main-wallet{
+    background:#07111f;
+    color:white;
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 15px 35px rgba(7,17,31,.2);
+    margin-bottom:18px;
+}
+
+.label{
+    color:#9aa8ba;
+    font-size:13px;
+}
+
+.amount{
+    font-size:38px;
+    font-weight:800;
+    margin:8px 0;
+}
+
+.wallet-status{
+    color:#34d399;
+    font-size:13px;
+}
+
+/* ACTIONS */
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:24px;
+}
+
+.action{
+    background:white;
+    border:1px solid #e5eaf0;
+    border-radius:14px;
+    padding:17px;
+    text-decoration:none;
+    color:#101828;
+}
+
+.action-icon{
+    width:40px;
+    height:40px;
+    border-radius:11px;
+    background:#e8f8f2;
+    color:#059669;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
+.action strong{
+    display:block;
+    font-size:14px;
+}
+
+.action span{
+    color:#667085;
+    font-size:11px;
+}
+
+/* CARD */
+
+.card{
+    background:white;
+    border:1px solid #e5eaf0;
+    border-radius:17px;
+    padding:20px;
+    margin-bottom:16px;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.card-header h2{
+    font-size:18px;
+}
+
+.badge{
+    background:#e8f8f2;
+    color:#059669;
+    padding:6px 9px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+/* ACCOUNT ROWS */
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid #edf0f4;
+}
+
+.row:last-child{
+    border-bottom:none;
+}
+
+.row span:first-child{
+    color:#667085;
+    font-size:13px;
+}
+
+.row strong{
+    font-size:14px;
+}
+
+/* PREMIUM */
+
+.premium{
+    background:linear-gradient(135deg,#0d1b2a,#10253a);
+    color:white;
+    border-radius:17px;
+    padding:22px;
+}
+
+.premium h2{
+    margin-bottom:9px;
+}
+
+.premium p{
+    color:#9aa8ba;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.primary{
+    display:block;
+    text-align:center;
+    background:#10b981;
+    color:#03110c;
+    padding:13px;
+    border-radius:11px;
+    text-decoration:none;
+    font-weight:800;
+    margin-top:17px;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    z-index:100;
+}
+
+.bottom-nav a{
+    text-decoration:none;
+    color:#667085;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    font-size:10px;
+}
+
+.bottom-nav a.active{
+    color:#059669;
+    font-weight:bold;
+}
+
+.nav-icon{
+    font-size:18px;
+}
+
+/* SUPPORT */
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:82px;
+    width:52px;
+    height:52px;
+    background:#f97316;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+    z-index:90;
+}
+
+/* DESKTOP */
+
+@media(min-width:700px){
+
+    .container{
+        padding:30px 25px;
+    }
+
+    .actions{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            N
+        </div>
+
+        NovaVest
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <div class="notification">
+
+            🔔
+
+            <span class="notification-badge">
+                3
+            </span>
+
+        </div>
+
+
+        <button
+            class="menu-button"
+            onclick="openMenu()"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- TITLE -->
+
+    <div class="page-title">
+
+        <small>
+            Account
+        </small>
+
+        <h1>
+            My Wallet
+        </h1>
+
+    </div>
+
+
+    <!-- MAIN BALANCE -->
+
+    <div class="main-wallet">
+
+        <div class="label">
+            Available balance
+        </div>
+
+        <div class="amount">
+            $0.00
+        </div>
+
+        <div class="wallet-status">
+            ● Demo account
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="actions">
+
+        <a href="deposit.html" class="action">
+
+            <div class="action-icon">
+                +
+            </div>
+
+            <strong>
+                Deposit
+            </strong>
+
+            <span>
+                Add funds
+            </span>
+
+        </a>
+
+
+        <a href="withdraw.html" class="action">
+
+            <div class="action-icon">
+                ↑
+            </div>
+
+            <strong>
+                Withdraw
+            </strong>
+
+            <span>
+                Request funds
+            </span>
+
+        </a>
+
+
+        <a href="transactions.html" class="action">
+
+            <div class="action-icon">
+                ≡
+            </div>
+
+            <strong>
+                Transactions
+            </strong>
+
+            <span>
+                View activity
+            </span>
+
+        </a>
+
+
+        <a href="profile.html" class="action">
+
+            <div class="action-icon">
+                ●
+            </div>
+
+            <strong>
+                Profile
+            </strong>
+
+            <span>
+                Account details
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <!-- BALANCE DETAILS -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>
+                Balance Overview
+            </h2>
+
+            <span class="badge">
+                USD
+            </span>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Total balance
+            </span>
+
+            <strong>
+                $0.00
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Available balance
+            </span>
+
+            <strong>
+                $0.00
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Active deposit
+            </span>
+
+            <strong>
+                $0.00
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Pending deposit
+            </span>
+
+            <strong>
+                $0.00
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Pending withdrawal
+            </span>
+
+            <strong>
+                $0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- PREMIUM ACCOUNT -->
+
+    <div class="premium">
+
+        <h2>
+            Premium Account
+        </h2>
+
+        <p>
+            Your account is currently on the basic tier.
+            Complete your profile and verification to
+            explore additional features.
+        </p>
+
+        <a href="profile.html" class="primary">
+            View Account
+        </a>
+
+    </div>
+
+</main>
+
+
+<!-- SUPPORT -->
+
+<div
+    class="support"
+    onclick="alert('Support chat will be connected here.')"
+>
+    💬
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+    <a href="dashboard.html">
+
+        <span class="nav-icon">⌂</span>
+
+        Home
+
+    </a>
+
+
+    <a href="wallet.html" class="active">
+
+        <span class="nav-icon">$</span>
+
+        Wallet
+
+    </a>
+
+
+    <a href="deposit.html">
+
+        <span class="nav-icon">+</span>
+
+        Deposit
+
+    </a>
+
+
+    <a href="withdraw.html">
+
+        <span class="nav-icon">↑</span>
+
+        Withdraw
+
+    </a>
+
+
+    <a href="transactions.html">
+
+        <span class="nav-icon">≡</span>
+
+        Transactions
+
+    </a>
+
+
+    <a href="#" onclick="openMenu();return false;">
+
+        <span class="nav-icon">☰</span>
+
+        Menu
+
+    </a>
+
+</nav>
+
+
+<script>
+
+function openMenu(){
+
+    alert(
+        "The full navigation menu will be connected as we continue building the application."
+    );
+
+}
+
+</script>
+
+
+</body>
+</html>

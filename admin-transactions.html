@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions - NovaVest Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fa;
+  color:#0d1b2a;
+  min-height:100vh;
+}
+
+.header{
+  background:#0a111e;
+  color:white;
+  min-height:68px;
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10b981;
+}
+
+.admin-badge{
+  font-size:9px;
+  color:#10b981;
+  border:1px solid #10b981;
+  padding:4px 7px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.notification{
+  position:relative;
+  background:none;
+  border:0;
+  color:white;
+  font-size:21px;
+}
+
+.badge{
+  position:absolute;
+  top:-5px;
+  right:-7px;
+  background:#ef4444;
+  color:white;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.menu-button{
+  background:none;
+  border:0;
+  color:white;
+  font-size:25px;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  display:none;
+  width:245px;
+  background:#0d1726;
+  color:white;
+  padding:20px 12px;
+  flex-shrink:0;
+}
+
+.sidebar-title{
+  color:#718096;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:1px;
+  margin:14px 10px 8px;
+}
+
+.side-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 11px;
+  color:#aab5c4;
+  text-decoration:none;
+  border-radius:9px;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.side-link:hover,
+.side-link.active{
+  background:#122338;
+  color:white;
+}
+
+.side-link.active{
+  border-left:3px solid #10b981;
+}
+
+.side-icon{
+  width:22px;
+  text-align:center;
+  font-size:17px;
+}
+
+.main{
+  flex:1;
+  width:100%;
+  max-width:1450px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.page-heading{
+  margin-bottom:20px;
+}
+
+.page-heading h1{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.page-heading p{
+  color:#758092;
+  font-size:13px;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+  margin-bottom:17px;
+}
+
+.summary-card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.summary-label{
+  color:#7b8490;
+  font-size:10px;
+  margin-bottom:6px;
+}
+
+.summary-value{
+  font-size:20px;
+  font-weight:800;
+}
+
+.toolbar{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:15px;
+}
+
+.search-row{
+  display:flex;
+  gap:8px;
+}
+
+.search{
+  flex:1;
+  min-width:0;
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  font-size:12px;
+}
+
+.search:focus{
+  border-color:#10b981;
+}
+
+.select{
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  padding:11px;
+  background:white;
+  font-size:11px;
+  color:#0d1b2a;
+}
+
+.filters{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  overflow-x:auto;
+}
+
+.filter{
+  border:1px solid #dce2e8;
+  background:white;
+  padding:8px 11px;
+  border-radius:9px;
+  font-size:10px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.filter.active{
+  background:#ecfdf5;
+  border-color:#a7f3d0;
+  color:#047857;
+}
+
+.transaction-card{
+  background:white;
+  border-radius:15px;
+  padding:16px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:12px;
+}
+
+.transaction-top{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.transaction-icon{
+  width:42px;
+  height:42px;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:19px;
+  flex-shrink:0;
+}
+
+.deposit-icon{
+  background:#ecfdf5;
+  color:#059669;
+}
+
+.withdraw-icon{
+  background:#fff7ed;
+  color:#ea580c;
+}
+
+.adjustment-icon{
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.transaction-info{
+  flex:1;
+  min-width:0;
+}
+
+.transaction-title{
+  font-size:13px;
+  font-weight:800;
+}
+
+.transaction-id{
+  color:#8a94a2;
+  font-size:9px;
+  margin-top:3px;
+}
+
+.amount{
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.amount.deposit{
+  color:#059669;
+}
+
+.amount.withdraw{
+  color:#ea580c;
+}
+
+.transaction-details{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:14px;
+  padding-top:13px;
+  border-top:1px solid #edf0f3;
+}
+
+.detail{
+  background:#f8fafc;
+  padding:9px;
+  border-radius:8px;
+}
+
+.detail-label{
+  color:#87919e;
+  font-size:9px;
+  margin-bottom:4px;
+}
+
+.detail-value{
+  font-size:10px;
+  font-weight:700;
+  word-break:break-word;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:10px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.pending{
+  background:#fffbeb;
+  color:#b45309;
+}
+
+.completed{
+  background:#ecfdf5;
+  color:#047857;
+}
+
+.rejected{
+  background:#fff1f2;
+  color:#be123c;
+}
+
+.demo{
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+
+.action-button{
+  flex:1;
+  border:0;
+  border-radius:9px;
+  padding:10px;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.approve{
+  background:#10b981;
+  color:white;
+}
+
+.reject{
+  background:#fff1f2;
+  color:#dc2626;
+}
+
+.view{
+  background:#f1f5f9;
+  color:#334155;
+}
+
+.notice{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  color:#92400e;
+  border-radius:12px;
+  padding:13px;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:15px;
+}
+
+.empty{
+  background:white;
+  border-radius:15px;
+  padding:35px 20px;
+  text-align:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.empty-icon{
+  font-size:38px;
+  margin-bottom:10px;
+}
+
+.empty h2{
+  font-size:17px;
+  margin-bottom:6px;
+}
+
+.empty p{
+  color:#7b8490;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.mobile-menu{
+  display:none;
+  position:fixed;
+  inset:68px 0 0 0;
+  background:#0d1726;
+  z-index:90;
+  padding:18px 15px;
+  overflow-y:auto;
+}
+
+.mobile-menu.open{
+  display:block;
+}
+
+.mobile-menu a{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:15px 12px;
+  color:#dbe3ec;
+  text-decoration:none;
+  border-bottom:1px solid #1c2a3c;
+  font-size:14px;
+}
+
+.mobile-logout{
+  color:#f87171 !important;
+}
+
+.logout-button{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#fff1f2;
+  color:#dc2626;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+@media(min-width:700px){
+
+  .sidebar{
+    display:block;
+  }
+
+  .menu-button{
+    display:none;
+  }
+
+  .main{
+    padding:28px;
+  }
+
+  .summary{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .transaction-card{
+    display:grid;
+    grid-template-columns:1.5fr 2fr;
+    gap:20px;
+    align-items:center;
+  }
+
+  .transaction-details{
+    margin-top:0;
+    padding-top:0;
+    border-top:0;
+  }
+
+  .actions{
+    grid-column:1 / -1;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="logo">
+      Nova<span>Vest</span>
+    </div>
+
+    <div class="admin-badge">
+      ADMIN
+    </div>
+
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      class="notification"
+      onclick="showNotifications()"
+    >
+      🔔
+      <span class="badge">3</span>
+    </button>
+
+    <button
+      class="menu-button"
+      onclick="toggleMobileMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-title">
+      Overview
+    </div>
+
+    <a href="admin.html" class="side-link">
+      <span class="side-icon">▦</span>
+      Dashboard
+    </a>
+
+
+    <div class="sidebar-title">
+      Users
+    </div>
+
+    <a href="admin-users.html" class="side-link">
+      <span class="side-icon">👥</span>
+      Users
+    </a>
+
+    <a href="admin-kyc.html" class="side-link">
+      <span class="side-icon">🛡️</span>
+      KYC Review
+    </a>
+
+
+    <div class="sidebar-title">
+      Finance
+    </div>
+
+    <a href="admin-transactions.html" class="side-link active">
+      <span class="side-icon">↔</span>
+      Transactions
+    </a>
+
+    <a href="admin-adjustments.html" class="side-link">
+      <span class="side-icon">＋</span>
+      Account Adjustments
+    </a>
+
+
+    <div class="sidebar-title">
+      Communication
+    </div>
+
+    <a href="admin-notifications.html" class="side-link">
+      <span class="side-icon">🔔</span>
+      Notifications
+    </a>
+
+
+    <div class="sidebar-title">
+      System
+    </div>
+
+    <a href="admin-settings.html" class="side-link">
+      <span class="side-icon">⚙</span>
+      Settings
+    </a>
+
+
+    <button
+      class="logout-button"
+      onclick="logoutAdmin()"
+    >
+      Log Out
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="page-heading">
+
+      <h1>Transactions</h1>
+
+      <p>
+        Review and manage transaction requests.
+      </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <section class="summary">
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Pending Deposits
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Pending Withdrawals
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Completed Today
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Total Transactions
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TOOLBAR -->
+
+    <section class="toolbar">
+
+      <div class="search-row">
+
+        <input
+          type="search"
+          id="searchInput"
+          class="search"
+          placeholder="Search transaction ID, username..."
+          oninput="filterTransactions()"
+        >
+
+        <select
+          id="typeSelect"
+          class="select"
+          onchange="filterTransactions()"
+        >
+          <option value="all">All Types</option>
+          <option value="deposit">Deposits</option>
+          <option value="withdrawal">Withdrawals</option>
+          <option value="adjustment">Adjustments</option>
+        </select>
+
+      </div>
+
+
+      <div class="filters">
+
+        <button
+          class="filter active"
+          onclick="setStatus('all',this)"
+        >
+          All
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('pending',this)"
+        >
+          Pending
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('completed',this)"
+        >
+          Completed
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('rejected',this)"
+        >
+          Rejected
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- TRANSACTIONS -->
+
+    <div id="transactionList">
+
+
+      <!-- DEMO DEPOSIT -->
+
+      <div
+        class="transaction-card"
+        data-type="deposit"
+        data-status="pending"
+        data-search="nv-demo-001 demo_user deposit"
+      >
+
+        <div class="transaction-top">
+
+          <div class="transaction-icon deposit-icon">
+            ↓
+          </div>
+
+          <div class="transaction-info">
+
+            <div class="transaction-title">
+              Deposit Request
+            </div>
+
+            <div class="transaction-id">
+              ID: NV-DEMO-001
+            </div>
+
+          </div>
+
+          <div class="amount deposit">
+            +$0.00
+          </div>
+
+        </div>
+
+
+        <div class="transaction-details">
+
+          <div class="detail">
+
+            <div class="detail-label">
+              User
+            </div>
+
+            <div class="detail-value">
+              @demo_user
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Method
+            </div>
+
+            <div class="detail-value">
+              Cryptocurrency
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Status
+            </div>
+
+            <div class="detail-value">
+              <span class="status pending">
+                PENDING
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Source
+            </div>
+
+            <div class="detail-value">
+              <span class="status demo">
+                DEMO
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="action-button approve"
+            onclick="reviewTransaction('NV-DEMO-001','approve')"
+          >
+            Approve
+          </button>
+
+          <button
+            class="action-button reject"
+            onclick="reviewTransaction('NV-DEMO-001','reject')"
+          >
+            Reject
+          </button>
+
+          <button
+            class="action-button view"
+            onclick="viewTransaction('NV-DEMO-001')"
+          >
+            Details
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- DEMO WITHDRAWAL -->
+
+      <div
+        class="transaction-card"
+        data-type="withdrawal"
+        data-status="pending"
+        data-search="nv-demo-002 sample_user withdrawal"
+      >
+
+        <div class="transaction-top">
+
+          <div class="transaction-icon withdraw-icon">
+            ↑
+          </div>
+
+          <div class="transaction-info">
+
+            <div class="transaction-title">
+              Withdrawal Request
+            </div>
+
+            <div class="transaction-id">
+              ID: NV-DEMO-002
+            </div>
+
+          </div>
+
+          <div class="amount withdraw">
+            -$0.00
+          </div>
+
+        </div>
+
+
+        <div class="transaction-details">
+
+          <div class="detail">
+
+            <div class="detail-label">
+              User
+            </div>
+
+            <div class="detail-value">
+              @sample_user
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Method
+            </div>
+
+            <div class="detail-value">
+              Crypto Wallet
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Status
+            </div>
+
+            <div class="detail-value">
+              <span class="status pending">
+                PENDING
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Source
+            </div>
+
+            <div class="detail-value">
+              <span class="status demo">
+                DEMO
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="action-button approve"
+            onclick="reviewTransaction('NV-DEMO-002','approve')"
+          >
+            Approve
+          </button>
+
+          <button
+            class="action-button reject"
+            onclick="reviewTransaction('NV-DEMO-002','reject')"
+          >
+            Reject
+          </button>
+
+          <button
+            class="action-button view"
+            onclick="viewTransaction('NV-DEMO-002')"
+          >
+            Details
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="emptyState"
+      class="empty"
+      style="display:none;"
+    >
+
+      <div class="empty-icon">
+        🔎
+      </div>
+
+      <h2>
+        No transactions found
+      </h2>
+
+      <p>
+        No transactions match your current search or filter.
+      </p>
+
+    </div>
+
+
+    <div class="notice">
+
+      <strong>Important:</strong>
+      The transactions above are frontend demonstration records.
+      The production version will only display genuine transactions
+      recorded by the secure backend ledger. Approvals and rejections
+      will require authenticated administrator permissions and will
+      be recorded in an audit log.
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<div
+  class="mobile-menu"
+  id="mobileMenu"
+>
+
+  <a href="admin.html">
+    ▦ &nbsp; Dashboard
+  </a>
+
+  <a href="admin-users.html">
+    👥 &nbsp; Users
+  </a>
+
+  <a href="admin-kyc.html">
+    🛡️ &nbsp; KYC Review
+  </a>
+
+  <a href="admin-transactions.html">
+    ↔ &nbsp; Transactions
+  </a>
+
+  <a href="admin-adjustments.html">
+    ＋ &nbsp; Account Adjustments
+  </a>
+
+  <a href="admin-notifications.html">
+    🔔 &nbsp; Notifications
+  </a>
+
+  <a href="admin-settings.html">
+    ⚙ &nbsp; Settings
+  </a>
+
+  <a
+    href="#"
+    class="mobile-logout"
+    onclick="logoutAdmin();return false;"
+  >
+    ↪ &nbsp; Log Out
+  </a>
+
+</div>
+
+
+<script>
+
+let currentStatus = "all";
+
+
+function toggleMobileMenu(){
+
+  document
+    .getElementById("mobileMenu")
+    .classList.toggle("open");
+
+}
+
+
+function showNotifications(){
+
+  alert(
+    "Admin notifications will be connected to the backend."
+  );
+
+}
+
+
+function setStatus(status,button){
+
+  currentStatus = status;
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(function(item){
+
+      item.classList.remove("active");
+
+    });
+
+  button.classList.add("active");
+
+  filterTransactions();
+
+}
+
+
+function filterTransactions(){
+
+  const search =
+    document
+      .getElementById("searchInput")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const type =
+    document
+      .getElementById("typeSelect")
+      .value;
+
+  const transactions =
+    document.querySelectorAll(".transaction-card");
+
+  let visible = 0;
+
+
+  transactions.forEach(function(transaction){
+
+    const searchable =
+      transaction
+        .getAttribute("data-search")
+        .toLowerCase();
+
+    const transactionType =
+      transaction.getAttribute("data-type");
+
+    const transactionStatus =
+      transaction.getAttribute("data-status");
+
+
+    const matchesSearch =
+      searchable.includes(search);
+
+    const matchesType =
+      type === "all" ||
+      transactionType === type;
+
+    const matchesStatus =
+      currentStatus === "all" ||
+      transactionStatus === currentStatus;
+
+
+    if(
+      matchesSearch &&
+      matchesType &&
+      matchesStatus
+    ){
+
+      transaction.style.display = "block";
+      visible++;
+
+    }else{
+
+      transaction.style.display = "none";
+
+    }
+
+  });
+
+
+  document
+    .getElementById("emptyState")
+    .style.display =
+      visible === 0 ? "block" : "none";
+
+}
+
+
+function viewTransaction(id){
+
+  alert(
+    "Transaction: " + id +
+    "\n\nDetailed transaction information will be loaded from the secure backend."
+  );
+
+}
+
+
+function reviewTransaction(id,action){
+
+  if(action === "approve"){
+
+    const confirmed =
+      confirm(
+        "Approve transaction " +
+        id +
+        "?\n\nIn production, this action will require authorization and will create an audit record."
+      );
+
+    if(confirmed){
+
+      alert(
+        "Demo action only.\n\nNo real funds were moved."
+      );
+
+    }
+
+  }
+
+
+  if(action === "reject"){
+
+    const confirmed =
+      confirm(
+        "Reject transaction " +
+        id +
+        "?"
+      );
+
+    if(confirmed){
+
+      alert(
+        "Demo action only.\n\nNo real transaction was changed."
+      );
+
+    }
+
+  }
+
+}
+
+
+function logoutAdmin(){
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to log out of the admin panel?"
+    );
+
+  if(confirmed){
+
+    localStorage.removeItem("nova_admin_session");
+
+    window.location.href =
+      "admin-login.html";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

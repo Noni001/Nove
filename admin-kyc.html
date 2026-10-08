@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Review - NovaVest Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fa;
+  color:#0d1b2a;
+  min-height:100vh;
+}
+
+.header{
+  background:#0a111e;
+  color:white;
+  min-height:68px;
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10b981;
+}
+
+.admin-badge{
+  font-size:9px;
+  color:#10b981;
+  border:1px solid #10b981;
+  padding:4px 7px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.notification{
+  position:relative;
+  background:none;
+  border:0;
+  color:white;
+  font-size:21px;
+}
+
+.badge{
+  position:absolute;
+  top:-5px;
+  right:-7px;
+  background:#ef4444;
+  color:white;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.menu-button{
+  background:none;
+  border:0;
+  color:white;
+  font-size:25px;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  display:none;
+  width:245px;
+  background:#0d1726;
+  color:white;
+  padding:20px 12px;
+  flex-shrink:0;
+}
+
+.sidebar-title{
+  color:#718096;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:1px;
+  margin:14px 10px 8px;
+}
+
+.side-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 11px;
+  color:#aab5c4;
+  text-decoration:none;
+  border-radius:9px;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.side-link:hover,
+.side-link.active{
+  background:#122338;
+  color:white;
+}
+
+.side-link.active{
+  border-left:3px solid #10b981;
+}
+
+.side-icon{
+  width:22px;
+  text-align:center;
+  font-size:17px;
+}
+
+.main{
+  flex:1;
+  width:100%;
+  max-width:1450px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.page-heading{
+  margin-bottom:20px;
+}
+
+.page-heading h1{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.page-heading p{
+  color:#758092;
+  font-size:13px;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+  margin-bottom:17px;
+}
+
+.summary-card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.summary-label{
+  color:#7b8490;
+  font-size:10px;
+  margin-bottom:6px;
+}
+
+.summary-value{
+  font-size:20px;
+  font-weight:800;
+}
+
+.toolbar{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:15px;
+}
+
+.search{
+  width:100%;
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  font-size:12px;
+}
+
+.search:focus{
+  border-color:#10b981;
+}
+
+.filters{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  overflow-x:auto;
+}
+
+.filter{
+  border:1px solid #dce2e8;
+  background:white;
+  padding:8px 11px;
+  border-radius:9px;
+  font-size:10px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.filter.active{
+  background:#ecfdf5;
+  border-color:#a7f3d0;
+  color:#047857;
+}
+
+.kyc-card{
+  background:white;
+  border-radius:15px;
+  padding:16px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:12px;
+}
+
+.kyc-header{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:#dbeafe;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:800;
+  color:#1d4ed8;
+  flex-shrink:0;
+}
+
+.user-info{
+  flex:1;
+  min-width:0;
+}
+
+.user-name{
+  font-size:14px;
+  font-weight:800;
+}
+
+.username{
+  font-size:10px;
+  color:#7b8490;
+  margin-top:3px;
+}
+
+.status{
+  padding:5px 8px;
+  border-radius:12px;
+  font-size:9px;
+  font-weight:800;
+}
+
+.pending{
+  background:#fffbeb;
+  color:#b45309;
+}
+
+.verified{
+  background:#ecfdf5;
+  color:#047857;
+}
+
+.rejected{
+  background:#fff1f2;
+  color:#be123c;
+}
+
+.demo{
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.details{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:14px;
+  padding-top:13px;
+  border-top:1px solid #edf0f3;
+}
+
+.detail{
+  background:#f8fafc;
+  padding:9px;
+  border-radius:8px;
+}
+
+.detail-label{
+  color:#87919e;
+  font-size:9px;
+  margin-bottom:4px;
+}
+
+.detail-value{
+  font-size:10px;
+  font-weight:700;
+  word-break:break-word;
+}
+
+.documents{
+  margin-top:13px;
+}
+
+.documents-title{
+  font-size:11px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.document-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.document{
+  border:1px dashed #cbd5e1;
+  border-radius:9px;
+  padding:11px;
+  background:#f8fafc;
+  font-size:10px;
+}
+
+.document-icon{
+  font-size:20px;
+  margin-bottom:5px;
+}
+
+.document-name{
+  font-weight:700;
+}
+
+.document-status{
+  color:#7b8490;
+  margin-top:3px;
+  font-size:9px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:13px;
+}
+
+.action-button{
+  flex:1;
+  border:0;
+  border-radius:9px;
+  padding:11px 8px;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.review{
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.approve{
+  background:#10b981;
+  color:white;
+}
+
+.reject{
+  background:#fff1f2;
+  color:#dc2626;
+}
+
+.notice{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  color:#92400e;
+  border-radius:12px;
+  padding:13px;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:15px;
+}
+
+.empty{
+  background:white;
+  border-radius:15px;
+  padding:35px 20px;
+  text-align:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.empty-icon{
+  font-size:38px;
+  margin-bottom:10px;
+}
+
+.empty h2{
+  font-size:17px;
+  margin-bottom:6px;
+}
+
+.empty p{
+  color:#7b8490;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.mobile-menu{
+  display:none;
+  position:fixed;
+  inset:68px 0 0 0;
+  background:#0d1726;
+  z-index:90;
+  padding:18px 15px;
+  overflow-y:auto;
+}
+
+.mobile-menu.open{
+  display:block;
+}
+
+.mobile-menu a{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:15px 12px;
+  color:#dbe3ec;
+  text-decoration:none;
+  border-bottom:1px solid #1c2a3c;
+  font-size:14px;
+}
+
+.mobile-logout{
+  color:#f87171 !important;
+}
+
+.logout-button{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#fff1f2;
+  color:#dc2626;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+@media(min-width:700px){
+
+  .sidebar{
+    display:block;
+  }
+
+  .menu-button{
+    display:none;
+  }
+
+  .main{
+    padding:28px;
+  }
+
+  .summary{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .kyc-card{
+    display:grid;
+    grid-template-columns:1fr 1.5fr;
+    gap:20px;
+    align-items:start;
+  }
+
+  .details{
+    margin-top:0;
+    padding-top:0;
+    border-top:0;
+  }
+
+  .documents,
+  .actions{
+    grid-column:1 / -1;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="logo">
+      Nova<span>Vest</span>
+    </div>
+
+    <div class="admin-badge">
+      ADMIN
+    </div>
+
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      class="notification"
+      onclick="showNotifications()"
+    >
+      🔔
+      <span class="badge">3</span>
+    </button>
+
+    <button
+      class="menu-button"
+      onclick="toggleMobileMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-title">
+      Overview
+    </div>
+
+    <a href="admin.html" class="side-link">
+      <span class="side-icon">▦</span>
+      Dashboard
+    </a>
+
+
+    <div class="sidebar-title">
+      Users
+    </div>
+
+    <a href="admin-users.html" class="side-link">
+      <span class="side-icon">👥</span>
+      Users
+    </a>
+
+    <a href="admin-kyc.html" class="side-link active">
+      <span class="side-icon">🛡️</span>
+      KYC Review
+    </a>
+
+
+    <div class="sidebar-title">
+      Finance
+    </div>
+
+    <a href="admin-transactions.html" class="side-link">
+      <span class="side-icon">↔</span>
+      Transactions
+    </a>
+
+    <a href="admin-adjustments.html" class="side-link">
+      <span class="side-icon">＋</span>
+      Account Adjustments
+    </a>
+
+
+    <div class="sidebar-title">
+      Communication
+    </div>
+
+    <a href="admin-notifications.html" class="side-link">
+      <span class="side-icon">🔔</span>
+      Notifications
+    </a>
+
+
+    <div class="sidebar-title">
+      System
+    </div>
+
+    <a href="admin-settings.html" class="side-link">
+      <span class="side-icon">⚙</span>
+      Settings
+    </a>
+
+
+    <button
+      class="logout-button"
+      onclick="logoutAdmin()"
+    >
+      Log Out
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="page-heading">
+
+      <h1>KYC Review</h1>
+
+      <p>
+        Review identity verification submissions.
+      </p>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <section class="summary">
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Pending Review
+        </div>
+
+        <div class="summary-value">
+          1
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Verified
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Rejected
+        </div>
+
+        <div class="summary-value">
+          0
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Total Submissions
+        </div>
+
+        <div class="summary-value">
+          1
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH/FILTER -->
+
+    <section class="toolbar">
+
+      <input
+        type="search"
+        id="searchInput"
+        class="search"
+        placeholder="Search name, username or email..."
+        oninput="filterKyc()"
+      >
+
+
+      <div class="filters">
+
+        <button
+          class="filter active"
+          onclick="setStatus('all',this)"
+        >
+          All
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('pending',this)"
+        >
+          Pending
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('verified',this)"
+        >
+          Verified
+        </button>
+
+        <button
+          class="filter"
+          onclick="setStatus('rejected',this)"
+        >
+          Rejected
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- KYC CARD -->
+
+    <div id="kycList">
+
+      <div
+        class="kyc-card"
+        data-status="pending"
+        data-search="demo investor demo_user investor@example.com"
+      >
+
+        <div>
+
+          <div class="kyc-header">
+
+            <div class="avatar">
+              DI
+            </div>
+
+            <div class="user-info">
+
+              <div class="user-name">
+                Demo Investor
+              </div>
+
+              <div class="username">
+                @demo_user
+              </div>
+
+            </div>
+
+            <span class="status pending">
+              PENDING
+            </span>
+
+          </div>
+
+
+          <div class="details">
+
+            <div class="detail">
+
+              <div class="detail-label">
+                Full Name
+              </div>
+
+              <div class="detail-value">
+                Demo Investor
+              </div>
+
+            </div>
+
+
+            <div class="detail">
+
+              <div class="detail-label">
+                Email
+              </div>
+
+              <div class="detail-value">
+                investor@example.com
+              </div>
+
+            </div>
+
+
+            <div class="detail">
+
+              <div class="detail-label">
+                Submitted
+              </div>
+
+              <div class="detail-value">
+                Demo Record
+              </div>
+
+            </div>
+
+
+            <div class="detail">
+
+              <div class="detail-label">
+                Record Type
+              </div>
+
+              <div class="detail-value">
+                <span class="status demo">
+                  DEMO
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- DOCUMENTS -->
+
+        <div class="documents">
+
+          <div class="documents-title">
+            Submitted Documents
+          </div>
+
+          <div class="document-list">
+
+            <div class="document">
+
+              <div class="document-icon">
+                🪪
+              </div>
+
+              <div class="document-name">
+                Government ID
+              </div>
+
+              <div class="document-status">
+                Demo placeholder
+              </div>
+
+            </div>
+
+
+            <div class="document">
+
+              <div class="document-icon">
+                📄
+              </div>
+
+              <div class="document-name">
+                Passport
+              </div>
+
+              <div class="document-status">
+                Demo placeholder
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+          <button
+            class="action-button review"
+            onclick="reviewKyc('demo_user')"
+          >
+            Review
+          </button>
+
+          <button
+            class="action-button approve"
+            onclick="approveKyc('demo_user')"
+          >
+            Approve
+          </button>
+
+          <button
+            class="action-button reject"
+            onclick="rejectKyc('demo_user')"
+          >
+            Reject
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="emptyState"
+      class="empty"
+      style="display:none;"
+    >
+
+      <div class="empty-icon">
+        🔎
+      </div>
+
+      <h2>
+        No KYC submissions found
+      </h2>
+
+      <p>
+        No verification records match your current search or filter.
+      </p>
+
+    </div>
+
+
+    <div class="notice">
+
+      <strong>Privacy & Security:</strong>
+      Production KYC documents must be stored securely with restricted
+      access. Admins should only see documents they are authorized to
+      review. Every approval or rejection will be recorded in the
+      audit log.
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<div
+  class="mobile-menu"
+  id="mobileMenu"
+>
+
+  <a href="admin.html">
+    ▦ &nbsp; Dashboard
+  </a>
+
+  <a href="admin-users.html">
+    👥 &nbsp; Users
+  </a>
+
+  <a href="admin-kyc.html">
+    🛡️ &nbsp; KYC Review
+  </a>
+
+  <a href="admin-transactions.html">
+    ↔ &nbsp; Transactions
+  </a>
+
+  <a href="admin-adjustments.html">
+    ＋ &nbsp; Account Adjustments
+  </a>
+
+  <a href="admin-notifications.html">
+    🔔 &nbsp; Notifications
+  </a>
+
+  <a href="admin-settings.html">
+    ⚙ &nbsp; Settings
+  </a>
+
+  <a
+    href="#"
+    class="mobile-logout"
+    onclick="logoutAdmin();return false;"
+  >
+    ↪ &nbsp; Log Out
+  </a>
+
+</div>
+
+
+<script>
+
+let currentStatus = "all";
+
+
+function toggleMobileMenu(){
+
+  document
+    .getElementById("mobileMenu")
+    .classList.toggle("open");
+
+}
+
+
+function showNotifications(){
+
+  alert(
+    "Admin notifications will be connected to the backend."
+  );
+
+}
+
+
+function setStatus(status,button){
+
+  currentStatus = status;
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(function(item){
+
+      item.classList.remove("active");
+
+    });
+
+  button.classList.add("active");
+
+  filterKyc();
+
+}
+
+
+function filterKyc(){
+
+  const search =
+    document
+      .getElementById("searchInput")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const records =
+    document.querySelectorAll(".kyc-card");
+
+  let visible = 0;
+
+
+  records.forEach(function(record){
+
+    const searchable =
+      record
+        .getAttribute("data-search")
+        .toLowerCase();
+
+    const status =
+      record.getAttribute("data-status");
+
+
+    const matchesSearch =
+      searchable.includes(search);
+
+    const matchesStatus =
+      currentStatus === "all" ||
+      status === currentStatus;
+
+
+    if(matchesSearch && matchesStatus){
+
+      record.style.display = "block";
+      visible++;
+
+    }else{
+
+      record.style.display = "none";
+
+    }
+
+  });
+
+
+  document
+    .getElementById("emptyState")
+    .style.display =
+      visible === 0 ? "block" : "none";
+
+}
+
+
+function reviewKyc(username){
+
+  alert(
+    "KYC review for @" +
+    username +
+    "\n\nIn production, the secure backend will provide authorized access to the submitted documents."
+  );
+
+}
+
+
+function approveKyc(username){
+
+  const confirmed =
+    confirm(
+      "Approve KYC for @" +
+      username +
+      "?"
+    );
+
+  if(confirmed){
+
+    alert(
+      "Demo action only.\n\nNo real KYC record has been changed."
+    );
+
+  }
+
+}
+
+
+function rejectKyc(username){
+
+  const confirmed =
+    confirm(
+      "Reject KYC for @" +
+      username +
+      "?"
+    );
+
+  if(confirmed){
+
+    alert(
+      "Demo action only.\n\nNo real KYC record has been changed."
+    );
+
+  }
+
+}
+
+
+function logoutAdmin(){
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to log out of the admin panel?"
+    );
+
+  if(confirmed){
+
+    localStorage.removeItem("nova_admin_session");
+
+    window.location.href =
+      "admin-login.html";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

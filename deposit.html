@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Deposit — NovaVest</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#101828;
+    padding-bottom:85px;
+}
+
+.header{
+    height:68px;
+    background:#07111f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 17px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:800;
+}
+
+.brand-icon{
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:#10b981;
+    color:#03110c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.notification{
+    position:relative;
+    font-size:21px;
+}
+
+.notification-badge{
+    position:absolute;
+    top:-5px;
+    right:-6px;
+    width:16px;
+    height:16px;
+    background:#ef4444;
+    color:white;
+    border-radius:50%;
+    font-size:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.menu-button{
+    width:37px;
+    height:37px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.15);
+    background:#101e31;
+    color:white;
+    font-size:18px;
+}
+
+.container{
+    max-width:1050px;
+    margin:auto;
+    padding:20px 15px;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title small{
+    color:#667085;
+}
+
+.page-title h1{
+    font-size:27px;
+    margin-top:5px;
+}
+
+.notice{
+    background:#eef8ff;
+    border:1px solid #c9e7ff;
+    color:#185a87;
+    padding:14px;
+    border-radius:14px;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:20px;
+}
+
+/* PLANS */
+
+.plans{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:13px;
+    margin-bottom:25px;
+}
+
+.plan{
+    background:white;
+    border:2px solid #e5eaf0;
+    border-radius:17px;
+    padding:19px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.plan:hover{
+    transform:translateY(-2px);
+}
+
+.plan.selected{
+    border-color:#10b981;
+    box-shadow:0 5px 18px rgba(16,185,129,.12);
+}
+
+.plan-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.plan h3{
+    font-size:18px;
+}
+
+.plan-badge{
+    background:#e8f8f2;
+    color:#059669;
+    padding:5px 8px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.plan-description{
+    color:#667085;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:15px;
+}
+
+.plan-details{
+    display:flex;
+    justify-content:space-between;
+}
+
+.plan-details div{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.plan-details span{
+    color:#667085;
+    font-size:10px;
+}
+
+.plan-details strong{
+    font-size:14px;
+}
+
+/* FORM */
+
+.card{
+    background:white;
+    border:1px solid #e5eaf0;
+    border-radius:17px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.card h2{
+    font-size:18px;
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.field{
+    margin-bottom:17px;
+}
+
+input,
+select{
+    width:100%;
+    padding:14px;
+    border-radius:11px;
+    border:1px solid #d9e0e8;
+    background:#f9fafb;
+    color:#101828;
+    outline:none;
+    font-size:14px;
+}
+
+input:focus,
+select:focus{
+    border-color:#10b981;
+    background:white;
+}
+
+.helper{
+    color:#667085;
+    font-size:11px;
+    margin-top:6px;
+}
+
+.amount-preview{
+    background:#07111f;
+    color:white;
+    border-radius:13px;
+    padding:16px;
+    margin:17px 0;
+}
+
+.amount-preview span{
+    color:#9aa8ba;
+    font-size:11px;
+}
+
+.amount-preview strong{
+    display:block;
+    font-size:25px;
+    margin-top:6px;
+}
+
+.primary{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:11px;
+    background:#10b981;
+    color:#03110c;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.message{
+    display:none;
+    padding:13px;
+    border-radius:11px;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:15px;
+}
+
+.success{
+    background:#e8f8f2;
+    color:#047857;
+}
+
+.error{
+    background:#fff0f0;
+    color:#b42318;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    z-index:100;
+}
+
+.bottom-nav a{
+    text-decoration:none;
+    color:#667085;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    font-size:10px;
+}
+
+.bottom-nav a.active{
+    color:#059669;
+    font-weight:bold;
+}
+
+.nav-icon{
+    font-size:18px;
+}
+
+/* SUPPORT */
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:82px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+    z-index:90;
+}
+
+/* DESKTOP */
+
+@media(min-width:700px){
+
+    .container{
+        padding:30px 25px;
+    }
+
+    .plans{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            N
+        </div>
+
+        NovaVest
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <div class="notification">
+
+            🔔
+
+            <span class="notification-badge">
+                3
+            </span>
+
+        </div>
+
+
+        <button
+            class="menu-button"
+            onclick="openMenu()"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <div class="page-title">
+
+        <small>
+            Funding
+        </small>
+
+        <h1>
+            Deposit
+        </h1>
+
+    </div>
+
+
+    <div class="notice">
+
+        <strong>Demo / application workflow</strong><br>
+
+        Select an example plan and submit a deposit
+        request. This interface does not process real
+        payments until a legitimate payment provider
+        is connected.
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Choose a plan
+        </h2>
+
+
+        <div class="plans">
+
+
+            <div
+                class="plan"
+                onclick="selectPlan(this,'Basic')"
+            >
+
+                <div class="plan-top">
+
+                    <h3>
+                        Basic
+                    </h3>
+
+                    <span class="plan-badge">
+                        STARTER
+                    </span>
+
+                </div>
+
+                <p class="plan-description">
+                    A simple starting option for exploring
+                    the platform.
+                </p>
+
+                <div class="plan-details">
+
+                    <div>
+
+                        <span>
+                            Minimum
+                        </span>
+
+                        <strong>
+                            $100
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong>
+                            Flexible
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="plan"
+                onclick="selectPlan(this,'Standard')"
+            >
+
+                <div class="plan-top">
+
+                    <h3>
+                        Standard
+                    </h3>
+
+                    <span class="plan-badge">
+                        POPULAR
+                    </span>
+
+                </div>
+
+                <p class="plan-description">
+                    Designed for users looking for a
+                    balanced portfolio experience.
+                </p>
+
+                <div class="plan-details">
+
+                    <div>
+
+                        <span>
+                            Minimum
+                        </span>
+
+                        <strong>
+                            $500
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong>
+                            Flexible
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="plan"
+                onclick="selectPlan(this,'Classic')"
+            >
+
+                <div class="plan-top">
+
+                    <h3>
+                        Classic
+                    </h3>
+
+                    <span class="plan-badge">
+                        ADVANCED
+                    </span>
+
+                </div>
+
+                <p class="plan-description">
+                    An advanced example portfolio option.
+                </p>
+
+                <div class="plan-details">
+
+                    <div>
+
+                        <span>
+                            Minimum
+                        </span>
+
+                        <strong>
+                            $1,000
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong>
+                            Flexible
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="plan"
+                onclick="selectPlan(this,'Premium')"
+            >
+
+                <div class="plan-top">
+
+                    <h3>
+                        Premium
+                    </h3>
+
+                    <span class="plan-badge">
+                        PREMIUM
+                    </span>
+
+                </div>
+
+                <p class="plan-description">
+                    A premium example portfolio option
+                    for larger account balances.
+                </p>
+
+                <div class="plan-details">
+
+                    <div>
+
+                        <span>
+                            Minimum
+                        </span>
+
+                        <strong>
+                            $5,000
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong>
+                            Flexible
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Deposit request
+        </h2>
+
+
+        <div id="message" class="message"></div>
+
+
+        <form id="depositForm">
+
+
+            <div class="field">
+
+                <label for="selectedPlan">
+                    Selected plan
+                </label>
+
+                <input
+                    type="text"
+                    id="selectedPlan"
+                    value=""
+                    placeholder="Select a plan above"
+                    readonly
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="amount">
+                    Amount (USD)
+                </label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    min="1"
+                    step="0.01"
+                    placeholder="Enter amount"
+                    required
+                    oninput="updateAmount()"
+                >
+
+                <div class="helper">
+                    Enter the amount you want to request.
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="paymentMode">
+                    Payment mode
+                </label>
+
+                <select id="paymentMode" required>
+
+                    <option value="">
+                        Select payment mode
+                    </option>
+
+                    <option value="Bank Transfer">
+                        Bank Transfer
+                    </option>
+
+                    <option value="Card">
+                        Card
+                    </option>
+
+                    <option value="Crypto">
+                        Cryptocurrency
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="amount-preview">
+
+                <span>
+                    Requested amount
+                </span>
+
+                <strong id="amountPreview">
+                    $0.00
+                </strong>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                Submit Deposit Request
+            </button>
+
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<div
+    class="support"
+    onclick="alert('Support chat will be connected here.')"
+>
+    💬
+</div>
+
+
+<nav class="bottom-nav">
+
+    <a href="dashboard.html">
+
+        <span class="nav-icon">⌂</span>
+        Home
+
+    </a>
+
+
+    <a href="wallet.html">
+
+        <span class="nav-icon">$</span>
+        Wallet
+
+    </a>
+
+
+    <a href="deposit.html" class="active">
+
+        <span class="nav-icon">+</span>
+        Deposit
+
+    </a>
+
+
+    <a href="withdraw.html">
+
+        <span class="nav-icon">↑</span>
+        Withdraw
+
+    </a>
+
+
+    <a href="transactions.html">
+
+        <span class="nav-icon">≡</span>
+        Transactions
+
+    </a>
+
+
+    <a href="#" onclick="openMenu();return false;">
+
+        <span class="nav-icon">☰</span>
+        Menu
+
+    </a>
+
+</nav>
+
+
+<script>
+
+let selectedPlan = "";
+
+
+function selectPlan(element, plan){
+
+    document
+        .querySelectorAll(".plan")
+        .forEach(function(item){
+
+            item.classList.remove("selected");
+
+        });
+
+
+    element.classList.add("selected");
+
+
+    selectedPlan = plan;
+
+
+    document.getElementById("selectedPlan").value =
+        plan;
+
+}
+
+
+function updateAmount(){
+
+    const amount =
+        parseFloat(
+            document.getElementById("amount").value
+        ) || 0;
+
+
+    document.getElementById("amountPreview")
+        .textContent =
+        "$" + amount.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+document
+.getElementById("depositForm")
+.addEventListener("submit",function(event){
+
+    event.preventDefault();
+
+
+    const message =
+        document.getElementById("message");
+
+    const amount =
+        parseFloat(
+            document.getElementById("amount").value
+        );
+
+    const paymentMode =
+        document.getElementById("paymentMode").value;
+
+
+    if(!selectedPlan){
+
+        message.textContent =
+            "Please select an investment plan first.";
+
+        message.className =
+            "message error";
+
+        message.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        message.textContent =
+            "Please enter a valid amount.";
+
+        message.className =
+            "message error";
+
+        message.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    if(!paymentMode){
+
+        message.textContent =
+            "Please select a payment mode.";
+
+        message.className =
+            "message error";
+
+        message.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Deposit request created for " +
+        selectedPlan +
+        ". Connect the backend/payment provider to process it.";
+
+    message.className =
+        "message success";
+
+    message.style.display =
+        "block";
+
+});
+
+
+function openMenu(){
+
+    alert(
+        "The full navigation menu will be connected later."
+    );
+
+}
+
+</script>
+
+</body>
+</html>

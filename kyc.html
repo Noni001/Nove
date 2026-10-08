@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Verification - NovaVest</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fa;
+    color:#111827;
+    padding-bottom:90px;
+}
+
+.header{
+    background:#0a111e;
+    color:white;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-icons{
+    display:flex;
+    gap:15px;
+    font-size:21px;
+}
+
+.container{
+    max-width:650px;
+    margin:auto;
+    padding:20px 16px;
+}
+
+.page-title{
+    font-size:27px;
+    margin-bottom:6px;
+}
+
+.subtitle{
+    color:#6b7280;
+    margin-bottom:20px;
+    line-height:1.5;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#fff8e7;
+    border-left:4px solid #f59e0b;
+}
+
+.status-icon{
+    font-size:28px;
+}
+
+.status h3{
+    margin-bottom:4px;
+}
+
+.status p{
+    color:#6b7280;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+input[type="text"],
+input[type="file"]{
+    width:100%;
+    padding:13px;
+    border:1px solid #d7dce3;
+    border-radius:10px;
+    font-size:14px;
+    margin-bottom:17px;
+    background:white;
+}
+
+input:focus{
+    border-color:#10b981;
+    outline:none;
+}
+
+.upload-box{
+    border:2px dashed #d1d5db;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:17px;
+    background:#fafafa;
+}
+
+.upload-box p{
+    color:#6b7280;
+    font-size:13px;
+    margin-bottom:10px;
+    line-height:1.4;
+}
+
+.btn{
+    width:100%;
+    border:0;
+    background:#10b981;
+    color:white;
+    padding:15px;
+    border-radius:11px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.requirements{
+    background:#f8fafc;
+    border-radius:12px;
+    padding:16px;
+}
+
+.requirements h3{
+    margin-bottom:10px;
+}
+
+.requirements li{
+    margin:8px 0;
+    color:#6b7280;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.message{
+    display:none;
+    margin-top:14px;
+    padding:12px;
+    border-radius:10px;
+    background:#ecfdf5;
+    color:#047857;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:100;
+}
+
+.nav-item{
+    text-decoration:none;
+    color:#6b7280;
+    font-size:11px;
+    text-align:center;
+}
+
+.nav-item span{
+    display:block;
+    font-size:20px;
+    margin-bottom:3px;
+}
+
+.nav-item.active{
+    color:#10b981;
+    font-weight:700;
+}
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    box-shadow:0 5px 18px rgba(0,0,0,.2);
+    z-index:90;
+}
+
+@media(min-width:700px){
+    .container{
+        padding-top:35px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        NovaVest
+    </div>
+
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>☰</span>
+    </div>
+
+</header>
+
+<main class="container">
+
+    <h1 class="page-title">
+        KYC Verification
+    </h1>
+
+    <p class="subtitle">
+        Verify your identity to unlock account features
+        that require identity verification.
+    </p>
+
+
+    <div class="card status">
+
+        <div class="status-icon">
+            ⚠️
+        </div>
+
+        <div>
+
+            <h3>
+                Verification Required
+            </h3>
+
+            <p>
+                Your account has not been verified yet.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:18px;">
+            Identity Information
+        </h3>
+
+        <form id="kycForm">
+
+            <label for="fullName">
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="fullName"
+                placeholder="Enter your full legal name"
+                required
+            >
+
+
+            <label>
+                Passport / Government ID
+            </label>
+
+            <div class="upload-box">
+
+                <p>
+                    Upload a clear image or PDF of your
+                    passport or accepted government-issued ID.
+                </p>
+
+                <input
+                    type="file"
+                    id="passport"
+                    accept="image/*,.pdf"
+                    required
+                >
+
+            </div>
+
+
+            <label>
+                ID Card
+            </label>
+
+            <div class="upload-box">
+
+                <p>
+                    Upload the required identity document.
+                    Make sure the details are readable.
+                </p>
+
+                <input
+                    type="file"
+                    id="idcard"
+                    accept="image/*,.pdf"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Submit Verification
+            </button>
+
+            <div
+                class="message"
+                id="message"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="requirements">
+
+            <h3>
+                Verification Requirements
+            </h3>
+
+            <ul>
+
+                <li>
+                    ✓ Your full legal name must match your
+                    submitted identity document.
+                </li>
+
+                <li>
+                    ✓ Documents should be clear and readable.
+                </li>
+
+                <li>
+                    ✓ Do not upload altered or fraudulent documents.
+                </li>
+
+                <li>
+                    ✓ Submitted documents must be reviewed
+                    securely by the authorized platform team.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:10px;">
+            Privacy & Security
+        </h3>
+
+        <p style="color:#6b7280;line-height:1.5;font-size:14px;">
+            In a production application, identity documents
+            should be uploaded through a secure encrypted
+            backend/storage system with strict access controls.
+            They should not be permanently stored in browser
+            code or exposed publicly.
+        </p>
+
+    </div>
+
+</main>
+
+
+<div
+    class="support"
+    onclick="supportMessage()"
+>
+    💬
+</div>
+
+
+<nav class="bottom-nav">
+
+    <a href="dashboard.html" class="nav-item">
+        <span>⌂</span>
+        Home
+    </a>
+
+    <a href="wallet.html" class="nav-item">
+        <span>💳</span>
+        Wallet
+    </a>
+
+    <a href="deposit.html" class="nav-item">
+        <span>＋</span>
+        Deposit
+    </a>
+
+    <a href="withdraw.html" class="nav-item">
+        <span>↗</span>
+        Withdraw
+    </a>
+
+    <a href="transactions.html" class="nav-item">
+        <span>↔</span>
+        Transactions
+    </a>
+
+    <a
+        href="#"
+        class="nav-item active"
+        onclick="openMenu()"
+    >
+        <span>☰</span>
+        Menu
+    </a>
+
+</nav>
+
+
+<script>
+
+document.getElementById("kycForm").addEventListener(
+    "submit",
+    function(e){
+
+        e.preventDefault();
+
+        const fullName =
+            document.getElementById("fullName").value.trim();
+
+        const passport =
+            document.getElementById("passport").files[0];
+
+        const idcard =
+            document.getElementById("idcard").files[0];
+
+        const message =
+            document.getElementById("message");
+
+        if(!fullName || !passport || !idcard){
+
+            message.style.display = "block";
+
+            message.innerHTML =
+                "Please complete all required fields and select both documents.";
+
+            return;
+        }
+
+        message.style.display = "block";
+
+        message.innerHTML =
+            "KYC submission interface is ready. Your documents will be securely submitted for review after the backend and protected document-storage system are connected.";
+
+    }
+);
+
+
+function supportMessage(){
+
+    alert(
+        "NovaVest Support\n\n" +
+        "Support chat will be connected to the support system in the final version."
+    );
+
+}
+
+
+function openMenu(){
+
+    alert(
+        "NovaVest Menu\n\n" +
+        "Profile\n" +
+        "KYC Verification\n" +
+        "Referrals\n" +
+        "Crypto Loan\n" +
+        "Crypto Card\n" +
+        "U2U Transfer\n" +
+        "Settings"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

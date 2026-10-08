@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions - NovaVest</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fa;
+    color:#111827;
+    padding-bottom:90px;
+}
+
+.header{
+    background:#0a111e;
+    color:white;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-icons{
+    display:flex;
+    gap:15px;
+    font-size:21px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px 16px;
+}
+
+.page-title{
+    font-size:27px;
+    margin-bottom:6px;
+}
+
+.subtitle{
+    color:#6b7280;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.summary-box{
+    background:#f8fafc;
+    border-radius:12px;
+    padding:16px;
+}
+
+.summary-box small{
+    display:block;
+    color:#6b7280;
+    margin-bottom:6px;
+}
+
+.summary-box strong{
+    font-size:21px;
+}
+
+.filters{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+select,
+input{
+    width:100%;
+    padding:13px;
+    border:1px solid #d7dce3;
+    border-radius:10px;
+    font-size:14px;
+    outline:none;
+}
+
+select:focus,
+input:focus{
+    border-color:#10b981;
+}
+
+.transaction{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:15px 0;
+    border-bottom:1px solid #edf0f3;
+}
+
+.transaction:last-child{
+    border-bottom:none;
+}
+
+.transaction-icon{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#eef2f7;
+    font-size:19px;
+    flex-shrink:0;
+}
+
+.transaction-info{
+    flex:1;
+    min-width:0;
+}
+
+.transaction-info strong{
+    display:block;
+    margin-bottom:4px;
+}
+
+.transaction-info small{
+    color:#6b7280;
+}
+
+.amount{
+    text-align:right;
+    font-weight:800;
+}
+
+.amount small{
+    display:block;
+    margin-top:4px;
+    font-weight:400;
+    color:#6b7280;
+}
+
+.empty{
+    text-align:center;
+    padding:35px 10px;
+}
+
+.empty-icon{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.empty p{
+    color:#6b7280;
+    line-height:1.5;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:100;
+}
+
+.nav-item{
+    text-decoration:none;
+    color:#6b7280;
+    font-size:11px;
+    text-align:center;
+}
+
+.nav-item span{
+    display:block;
+    font-size:20px;
+    margin-bottom:3px;
+}
+
+.nav-item.active{
+    color:#10b981;
+    font-weight:700;
+}
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    box-shadow:0 5px 18px rgba(0,0,0,.2);
+    z-index:90;
+}
+
+@media(max-width:480px){
+
+    .summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .filters{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(min-width:700px){
+
+    .container{
+        padding-top:35px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        NovaVest
+    </div>
+
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>☰</span>
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <h1 class="page-title">
+        Transactions
+    </h1>
+
+    <p class="subtitle">
+        View your account transaction history.
+    </p>
+
+
+    <div class="card">
+
+        <div class="summary">
+
+            <div class="summary-box">
+
+                <small>
+                    Total Deposits
+                </small>
+
+                <strong>
+                    $0.00
+                </strong>
+
+            </div>
+
+            <div class="summary-box">
+
+                <small>
+                    Total Withdrawals
+                </small>
+
+                <strong>
+                    $0.00
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:15px;">
+            Filter Transactions
+        </h3>
+
+        <div class="filters">
+
+            <select id="typeFilter">
+
+                <option value="all">
+                    All Types
+                </option>
+
+                <option value="deposit">
+                    Deposits
+                </option>
+
+                <option value="withdrawal">
+                    Withdrawals
+                </option>
+
+                <option value="transfer">
+                    Transfers
+                </option>
+
+                <option value="bonus">
+                    Bonuses
+                </option>
+
+            </select>
+
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search transactions"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:8px;">
+            Transaction History
+        </h3>
+
+        <div id="transactionList">
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+                <p>
+                    No transactions yet.
+                    Your completed and pending transactions
+                    will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <p style="
+            color:#6b7280;
+            font-size:13px;
+            line-height:1.5;
+        ">
+            Transaction records in the production version
+            will be generated from the secure backend ledger.
+            Account activity will not be displayed as completed
+            until the corresponding transaction is actually
+            recorded and confirmed.
+        </p>
+
+    </div>
+
+</main>
+
+
+<div
+    class="support"
+    onclick="supportMessage()"
+>
+    💬
+</div>
+
+
+<nav class="bottom-nav">
+
+    <a href="dashboard.html" class="nav-item">
+        <span>⌂</span>
+        Home
+    </a>
+
+    <a href="wallet.html" class="nav-item">
+        <span>💳</span>
+        Wallet
+    </a>
+
+    <a href="deposit.html" class="nav-item">
+        <span>＋</span>
+        Deposit
+    </a>
+
+    <a href="withdraw.html" class="nav-item">
+        <span>↗</span>
+        Withdraw
+    </a>
+
+    <a
+        href="transactions.html"
+        class="nav-item active"
+    >
+        <span>↔</span>
+        Transactions
+    </a>
+
+    <a
+        href="#"
+        class="nav-item"
+        onclick="openMenu()"
+    >
+        <span>☰</span>
+        Menu
+    </a>
+
+</nav>
+
+
+<script>
+
+const typeFilter =
+    document.getElementById("typeFilter");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+
+typeFilter.addEventListener(
+    "change",
+    filterTransactions
+);
+
+searchInput.addEventListener(
+    "input",
+    filterTransactions
+);
+
+
+function filterTransactions(){
+
+    /*
+        Transaction data will be loaded from the
+        authenticated backend in the production version.
+
+        This function is intentionally left ready
+        for the backend transaction ledger.
+    */
+
+    console.log(
+        "Transaction filter:",
+        typeFilter.value,
+        searchInput.value
+    );
+
+}
+
+
+function supportMessage(){
+
+    alert(
+        "NovaVest Support\n\n" +
+        "Support chat will be connected to the support system in the final version."
+    );
+
+}
+
+
+function openMenu(){
+
+    alert(
+        "NovaVest Menu\n\n" +
+        "Profile\n" +
+        "KYC Verification\n" +
+        "Referrals\n" +
+        "Crypto Loan\n" +
+        "Crypto Card\n" +
+        "U2U Transfer\n" +
+        "Settings"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

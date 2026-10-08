@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management - NovaVest</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fa;
+  color:#0d1b2a;
+  min-height:100vh;
+  padding-bottom:30px;
+}
+
+.header{
+  background:#0a111e;
+  color:white;
+  min-height:68px;
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10b981;
+}
+
+.admin-badge{
+  font-size:9px;
+  color:#10b981;
+  border:1px solid #10b981;
+  padding:4px 7px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.notification{
+  position:relative;
+  background:none;
+  border:0;
+  color:white;
+  font-size:21px;
+  cursor:pointer;
+}
+
+.badge{
+  position:absolute;
+  top:-5px;
+  right:-7px;
+  background:#ef4444;
+  color:white;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.menu-button{
+  background:none;
+  border:0;
+  color:white;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  display:none;
+  width:245px;
+  background:#0d1726;
+  color:white;
+  padding:20px 12px;
+  flex-shrink:0;
+}
+
+.sidebar-title{
+  color:#718096;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:1px;
+  margin:14px 10px 8px;
+}
+
+.side-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 11px;
+  color:#aab5c4;
+  text-decoration:none;
+  border-radius:9px;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.side-link:hover,
+.side-link.active{
+  background:#122338;
+  color:white;
+}
+
+.side-link.active{
+  border-left:3px solid #10b981;
+}
+
+.side-icon{
+  width:22px;
+  text-align:center;
+  font-size:17px;
+}
+
+.main{
+  flex:1;
+  width:100%;
+  max-width:1400px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.page-heading{
+  margin-bottom:20px;
+}
+
+.page-heading h1{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.page-heading p{
+  color:#758092;
+  font-size:13px;
+}
+
+.toolbar{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:16px;
+}
+
+.search-row{
+  display:flex;
+  gap:9px;
+}
+
+.search{
+  flex:1;
+  min-width:0;
+  padding:13px;
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  outline:none;
+  font-size:13px;
+}
+
+.search:focus{
+  border-color:#10b981;
+}
+
+.search-button{
+  border:0;
+  background:#10b981;
+  color:white;
+  border-radius:10px;
+  padding:0 17px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.filters{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  overflow-x:auto;
+}
+
+.filter{
+  border:1px solid #dce2e8;
+  background:white;
+  padding:8px 11px;
+  border-radius:9px;
+  font-size:11px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.filter.active{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#a7f3d0;
+}
+
+.user-card{
+  background:white;
+  border-radius:15px;
+  padding:16px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  margin-bottom:12px;
+}
+
+.user-top{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#dff7ee;
+  color:#047857;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  flex-shrink:0;
+}
+
+.user-info{
+  flex:1;
+  min-width:0;
+}
+
+.user-name{
+  font-size:14px;
+  font-weight:800;
+}
+
+.username{
+  color:#7c8794;
+  font-size:11px;
+  margin-top:3px;
+}
+
+.user-email{
+  color:#7c8794;
+  font-size:11px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  margin-top:3px;
+}
+
+.user-details{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:15px;
+  padding-top:13px;
+  border-top:1px solid #edf0f3;
+}
+
+.detail{
+  background:#f8fafc;
+  border-radius:8px;
+  padding:9px;
+}
+
+.detail-label{
+  color:#87919e;
+  font-size:9px;
+  margin-bottom:4px;
+}
+
+.detail-value{
+  font-size:11px;
+  font-weight:700;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:10px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.status.active{
+  background:#ecfdf5;
+  color:#047857;
+}
+
+.status.pending{
+  background:#fffbeb;
+  color:#b45309;
+}
+
+.status.verified{
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.status.notverified{
+  background:#f1f5f9;
+  color:#64748b;
+}
+
+.view-button{
+  width:100%;
+  border:1px solid #dce2e8;
+  background:white;
+  color:#0d1b2a;
+  border-radius:9px;
+  padding:10px;
+  font-size:11px;
+  font-weight:700;
+  margin-top:12px;
+  cursor:pointer;
+}
+
+.view-button:hover{
+  border-color:#10b981;
+  color:#047857;
+}
+
+.empty{
+  background:white;
+  border-radius:15px;
+  padding:35px 20px;
+  text-align:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.empty-icon{
+  font-size:38px;
+  margin-bottom:12px;
+}
+
+.empty h2{
+  font-size:17px;
+  margin-bottom:6px;
+}
+
+.empty p{
+  color:#7b8490;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.notice{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  color:#92400e;
+  border-radius:12px;
+  padding:13px;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:16px;
+}
+
+.mobile-menu{
+  display:none;
+  position:fixed;
+  inset:68px 0 0 0;
+  background:#0d1726;
+  z-index:90;
+  padding:18px 15px;
+  overflow-y:auto;
+}
+
+.mobile-menu.open{
+  display:block;
+}
+
+.mobile-menu a{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:15px 12px;
+  color:#dbe3ec;
+  text-decoration:none;
+  border-bottom:1px solid #1c2a3c;
+  font-size:14px;
+}
+
+.mobile-logout{
+  color:#f87171 !important;
+}
+
+.logout-button{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#fff1f2;
+  color:#dc2626;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.footer{
+  text-align:center;
+  color:#8a94a2;
+  font-size:10px;
+  padding:25px 10px 5px;
+}
+
+@media(min-width:700px){
+
+  .sidebar{
+    display:block;
+  }
+
+  .menu-button{
+    display:none;
+  }
+
+  .main{
+    padding:28px;
+  }
+
+  .user-card{
+    display:grid;
+    grid-template-columns:1.5fr 2fr;
+    align-items:center;
+    gap:20px;
+  }
+
+  .user-details{
+    margin-top:0;
+    padding-top:0;
+    border-top:0;
+  }
+
+  .view-button{
+    width:auto;
+    padding:9px 18px;
+    margin-top:0;
+    grid-column:1 / -1;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="logo">
+      Nova<span>Vest</span>
+    </div>
+
+    <div class="admin-badge">
+      ADMIN
+    </div>
+
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      class="notification"
+      onclick="showNotifications()"
+    >
+      🔔
+      <span class="badge">3</span>
+    </button>
+
+    <button
+      class="menu-button"
+      onclick="toggleMobileMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-title">
+      Overview
+    </div>
+
+    <a href="admin.html" class="side-link">
+      <span class="side-icon">▦</span>
+      Dashboard
+    </a>
+
+
+    <div class="sidebar-title">
+      Users
+    </div>
+
+    <a href="admin-users.html" class="side-link active">
+      <span class="side-icon">👥</span>
+      Users
+    </a>
+
+    <a href="admin-kyc.html" class="side-link">
+      <span class="side-icon">🛡️</span>
+      KYC Review
+    </a>
+
+
+    <div class="sidebar-title">
+      Finance
+    </div>
+
+    <a href="admin-transactions.html" class="side-link">
+      <span class="side-icon">↔</span>
+      Transactions
+    </a>
+
+    <a href="admin-adjustments.html" class="side-link">
+      <span class="side-icon">＋</span>
+      Account Adjustments
+    </a>
+
+
+    <div class="sidebar-title">
+      Communication
+    </div>
+
+    <a href="admin-notifications.html" class="side-link">
+      <span class="side-icon">🔔</span>
+      Notifications
+    </a>
+
+
+    <div class="sidebar-title">
+      System
+    </div>
+
+    <a href="admin-settings.html" class="side-link">
+      <span class="side-icon">⚙</span>
+      Settings
+    </a>
+
+
+    <button
+      class="logout-button"
+      onclick="logoutAdmin()"
+    >
+      Log Out
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="page-heading">
+
+      <h1>User Management</h1>
+
+      <p>
+        Search and manage registered NovaVest users.
+      </p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <section class="toolbar">
+
+      <div class="search-row">
+
+        <input
+          type="search"
+          id="searchInput"
+          class="search"
+          placeholder="Search name, username or email..."
+          oninput="filterUsers()"
+        >
+
+        <button
+          class="search-button"
+          onclick="filterUsers()"
+        >
+          Search
+        </button>
+
+      </div>
+
+
+      <div class="filters">
+
+        <button
+          class="filter active"
+          onclick="setFilter('all',this)"
+        >
+          All Users
+        </button>
+
+        <button
+          class="filter"
+          onclick="setFilter('active',this)"
+        >
+          Active
+        </button>
+
+        <button
+          class="filter"
+          onclick="setFilter('kyc',this)"
+        >
+          KYC Verified
+        </button>
+
+        <button
+          class="filter"
+          onclick="setFilter('pending',this)"
+        >
+          Pending
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- USER LIST -->
+
+    <div id="userList">
+
+      <!-- DEMO USER 1 -->
+
+      <div
+        class="user-card"
+        data-status="active"
+        data-kyc="verified"
+        data-search="demo investor demo_user investor@example.com"
+      >
+
+        <div class="user-top">
+
+          <div class="avatar">
+            DI
+          </div>
+
+          <div class="user-info">
+
+            <div class="user-name">
+              Demo Investor
+            </div>
+
+            <div class="username">
+              @demo_user
+            </div>
+
+            <div class="user-email">
+              investor@example.com
+            </div>
+
+          </div>
+
+          <span class="status active">
+            ACTIVE
+          </span>
+
+        </div>
+
+
+        <div class="user-details">
+
+          <div class="detail">
+
+            <div class="detail-label">
+              KYC
+            </div>
+
+            <div class="detail-value">
+              <span class="status verified">
+                VERIFIED
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Account Type
+            </div>
+
+            <div class="detail-value">
+              Standard
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Member Since
+            </div>
+
+            <div class="detail-value">
+              Demo
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Account Balance
+            </div>
+
+            <div class="detail-value">
+              $0.00
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="view-button"
+          onclick="viewUser('demo_user')"
+        >
+          View User
+        </button>
+
+      </div>
+
+
+      <!-- DEMO USER 2 -->
+
+      <div
+        class="user-card"
+        data-status="pending"
+        data-kyc="pending"
+        data-search="sample account sample_user sample@example.com"
+      >
+
+        <div class="user-top">
+
+          <div class="avatar">
+            SA
+          </div>
+
+          <div class="user-info">
+
+            <div class="user-name">
+              Sample Account
+            </div>
+
+            <div class="username">
+              @sample_user
+            </div>
+
+            <div class="user-email">
+              sample@example.com
+            </div>
+
+          </div>
+
+          <span class="status pending">
+            PENDING
+          </span>
+
+        </div>
+
+
+        <div class="user-details">
+
+          <div class="detail">
+
+            <div class="detail-label">
+              KYC
+            </div>
+
+            <div class="detail-value">
+              <span class="status pending">
+                PENDING
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Account Type
+            </div>
+
+            <div class="detail-value">
+              Standard
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Member Since
+            </div>
+
+            <div class="detail-value">
+              Demo
+            </div>
+
+          </div>
+
+
+          <div class="detail">
+
+            <div class="detail-label">
+              Account Balance
+            </div>
+
+            <div class="detail-value">
+              $0.00
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="view-button"
+          onclick="viewUser('sample_user')"
+        >
+          View User
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="emptyState"
+      class="empty"
+      style="display:none;"
+    >
+
+      <div class="empty-icon">
+        🔎
+      </div>
+
+      <h2>
+        No users found
+      </h2>
+
+      <p>
+        No matching users were found for the current search or filter.
+      </p>
+
+    </div>
+
+
+    <div class="notice">
+
+      <strong>Demo data:</strong>
+      The users displayed above are placeholders for the frontend.
+      In production, user records, balances, KYC status and account
+      actions will be loaded from the secure backend database.
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<div
+  class="mobile-menu"
+  id="mobileMenu"
+>
+
+  <a href="admin.html">
+    ▦ &nbsp; Dashboard
+  </a>
+
+  <a href="admin-users.html">
+    👥 &nbsp; Users
+  </a>
+
+  <a href="admin-kyc.html">
+    🛡️ &nbsp; KYC Review
+  </a>
+
+  <a href="admin-transactions.html">
+    ↔ &nbsp; Transactions
+  </a>
+
+  <a href="admin-adjustments.html">
+    ＋ &nbsp; Account Adjustments
+  </a>
+
+  <a href="admin-notifications.html">
+    🔔 &nbsp; Notifications
+  </a>
+
+  <a href="admin-settings.html">
+    ⚙ &nbsp; Settings
+  </a>
+
+  <a
+    href="#"
+    class="mobile-logout"
+    onclick="logoutAdmin();return false;"
+  >
+    ↪ &nbsp; Log Out
+  </a>
+
+</div>
+
+
+<script>
+
+let currentFilter = "all";
+
+
+function toggleMobileMenu(){
+
+  document
+    .getElementById("mobileMenu")
+    .classList.toggle("open");
+
+}
+
+
+function showNotifications(){
+
+  alert(
+    "Admin notifications will be loaded from the backend."
+  );
+
+}
+
+
+function setFilter(filter, button){
+
+  currentFilter = filter;
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(function(item){
+
+      item.classList.remove("active");
+
+    });
+
+  button.classList.add("active");
+
+  filterUsers();
+
+}
+
+
+function filterUsers(){
+
+  const search =
+    document
+      .getElementById("searchInput")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const users =
+    document.querySelectorAll(".user-card");
+
+  let visible = 0;
+
+
+  users.forEach(function(user){
+
+    const searchable =
+      user
+        .getAttribute("data-search")
+        .toLowerCase();
+
+    const status =
+      user.getAttribute("data-status");
+
+    const kyc =
+      user.getAttribute("data-kyc");
+
+
+    const matchesSearch =
+      searchable.includes(search);
+
+    let matchesFilter = true;
+
+
+    if(currentFilter === "active"){
+
+      matchesFilter =
+        status === "active";
+
+    }
+
+
+    if(currentFilter === "pending"){
+
+      matchesFilter =
+        status === "pending";
+
+    }
+
+
+    if(currentFilter === "kyc"){
+
+      matchesFilter =
+        kyc === "verified";
+
+    }
+
+
+    if(matchesSearch && matchesFilter){
+
+      user.style.display = "block";
+      visible++;
+
+    }else{
+
+      user.style.display = "none";
+
+    }
+
+  });
+
+
+  document
+    .getElementById("emptyState")
+    .style.display =
+      visible === 0 ? "block" : "none";
+
+}
+
+
+function viewUser(username){
+
+  alert(
+    "User: @" + username +
+    "\n\n" +
+    "Detailed user management will be connected to the secure backend."
+  );
+
+}
+
+
+function logoutAdmin(){
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to log out of the admin panel?"
+    );
+
+  if(confirmed){
+
+    localStorage.removeItem("nova_admin_session");
+
+    window.location.href =
+      "admin-login.html";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

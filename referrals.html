@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Referrals - NovaVest</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fa;
+    color:#111827;
+    padding-bottom:90px;
+}
+
+.header{
+    background:#0a111e;
+    color:white;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-icons{
+    display:flex;
+    gap:14px;
+    font-size:21px;
+}
+
+.container{
+    max-width:650px;
+    margin:auto;
+    padding:20px 16px;
+}
+
+.page-title{
+    font-size:27px;
+    margin-bottom:6px;
+}
+
+.subtitle{
+    color:#6b7280;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.referral-hero{
+    background:#0d1b2a;
+    color:white;
+}
+
+.referral-hero small{
+    color:#aeb8c5;
+}
+
+.referral-hero h2{
+    font-size:32px;
+    margin:8px 0;
+}
+
+.referral-hero p{
+    color:#cbd5e1;
+    line-height:1.5;
+}
+
+.label{
+    font-size:13px;
+    font-weight:700;
+    color:#6b7280;
+    margin-bottom:7px;
+}
+
+.referral-box{
+    display:flex;
+    gap:8px;
+}
+
+.referral-box input{
+    flex:1;
+    min-width:0;
+    padding:13px;
+    border:1px solid #d7dce3;
+    border-radius:10px;
+    font-size:14px;
+}
+
+.copy-btn{
+    border:0;
+    background:#10b981;
+    color:white;
+    border-radius:10px;
+    padding:0 16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.stat{
+    background:#f8fafc;
+    border-radius:12px;
+    padding:16px;
+}
+
+.stat small{
+    display:block;
+    color:#6b7280;
+    margin-bottom:7px;
+}
+
+.stat strong{
+    font-size:22px;
+}
+
+.bonus{
+    border-left:4px solid #10b981;
+}
+
+.bonus h3{
+    margin-bottom:8px;
+}
+
+.bonus p{
+    color:#6b7280;
+    line-height:1.5;
+    margin-bottom:15px;
+}
+
+.claim-btn{
+    width:100%;
+    border:0;
+    background:#10b981;
+    color:white;
+    padding:14px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.message{
+    display:none;
+    margin-top:12px;
+    padding:11px;
+    background:#ecfdf5;
+    color:#047857;
+    border-radius:9px;
+    font-size:14px;
+}
+
+.empty{
+    text-align:center;
+    padding:25px 10px;
+}
+
+.empty-icon{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.empty p{
+    color:#6b7280;
+    line-height:1.5;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:100;
+}
+
+.nav-item{
+    text-decoration:none;
+    color:#6b7280;
+    font-size:11px;
+    text-align:center;
+}
+
+.nav-item span{
+    display:block;
+    font-size:20px;
+    margin-bottom:3px;
+}
+
+.nav-item.active{
+    color:#10b981;
+    font-weight:700;
+}
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    box-shadow:0 5px 18px rgba(0,0,0,.2);
+    z-index:90;
+}
+
+@media(min-width:700px){
+    .container{
+        padding-top:35px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        NovaVest
+    </div>
+
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>☰</span>
+    </div>
+
+</header>
+
+<main class="container">
+
+    <h1 class="page-title">
+        Your Referrals
+    </h1>
+
+    <p class="subtitle">
+        Invite people and track your referral activity.
+    </p>
+
+
+    <div class="card referral-hero">
+
+        <small>
+            Referral Bonus Rate
+        </small>
+
+        <h2>
+            12%
+        </h2>
+
+        <p>
+            Eligible referral bonuses are calculated and credited
+            by the platform according to the applicable referral
+            program terms.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="label">
+            YOUR REFERRAL LINK
+        </div>
+
+        <div class="referral-box">
+
+            <input
+                type="text"
+                id="referralLink"
+                value="https://novavest.example/register?ref=demo"
+                readonly
+            >
+
+            <button
+                class="copy-btn"
+                onclick="copyReferral()"
+            >
+                Copy
+            </button>
+
+        </div>
+
+        <div
+            class="message"
+            id="copyMessage"
+        >
+            Referral link copied.
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:15px;">
+            Referral Overview
+        </h3>
+
+        <div class="stats">
+
+            <div class="stat">
+                <small>Total Referrals</small>
+                <strong>0</strong>
+            </div>
+
+            <div class="stat">
+                <small>Active Referrals</small>
+                <strong>0</strong>
+            </div>
+
+            <div class="stat">
+                <small>Referral Bonus</small>
+                <strong>$0.00</strong>
+            </div>
+
+            <div class="stat">
+                <small>Pending Bonus</small>
+                <strong>$0.00</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card bonus">
+
+        <h3>
+            Referral Bonus
+        </h3>
+
+        <p>
+            Once your eligible referral activity is recorded,
+            applicable bonuses can be reviewed here. The final
+            version will calculate and credit bonuses through the
+            secure backend.
+        </p>
+
+        <button
+            class="claim-btn"
+            onclick="claimBonus()"
+        >
+            Check Available Bonus
+        </button>
+
+        <div
+            class="message"
+            id="bonusMessage"
+        ></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:10px;">
+            Your Referrals
+        </h3>
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                👥
+            </div>
+
+            <p>
+                You don't have any referrals yet.
+                Share your referral link to start building
+                your referral network.
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<div
+    class="support"
+    onclick="supportMessage()"
+>
+    💬
+</div>
+
+
+<nav class="bottom-nav">
+
+    <a
+        href="dashboard.html"
+        class="nav-item"
+    >
+        <span>⌂</span>
+        Home
+    </a>
+
+    <a
+        href="wallet.html"
+        class="nav-item"
+    >
+        <span>💳</span>
+        Wallet
+    </a>
+
+    <a
+        href="deposit.html"
+        class="nav-item"
+    >
+        <span>＋</span>
+        Deposit
+    </a>
+
+    <a
+        href="withdraw.html"
+        class="nav-item"
+    >
+        <span>↗</span>
+        Withdraw
+    </a>
+
+    <a
+        href="transactions.html"
+        class="nav-item"
+    >
+        <span>↔</span>
+        Transactions
+    </a>
+
+    <a
+        href="#"
+        class="nav-item"
+        onclick="openMenu()"
+    >
+        <span>☰</span>
+        Menu
+    </a>
+
+</nav>
+
+
+<script>
+
+function copyReferral(){
+
+    const input =
+        document.getElementById("referralLink");
+
+    input.select();
+    input.setSelectionRange(0,99999);
+
+    navigator.clipboard.writeText(input.value)
+    .then(function(){
+
+        const message =
+            document.getElementById("copyMessage");
+
+        message.style.display = "block";
+
+        setTimeout(function(){
+            message.style.display = "none";
+        },2500);
+
+    })
+    .catch(function(){
+
+        alert(
+            "Copy the referral link manually:\n\n" +
+            input.value
+        );
+
+    });
+
+}
+
+
+function claimBonus(){
+
+    const message =
+        document.getElementById("bonusMessage");
+
+    message.style.display = "block";
+
+    message.innerHTML =
+        "No referral bonus is currently available. The secure backend will calculate eligible bonuses when connected.";
+
+}
+
+
+function supportMessage(){
+
+    alert(
+        "NovaVest Support\n\n" +
+        "Support chat will be connected to the support system in the final version."
+    );
+
+}
+
+
+function openMenu(){
+
+    alert(
+        "NovaVest Menu\n\n" +
+        "Profile\n" +
+        "KYC Verification\n" +
+        "Referrals\n" +
+        "Crypto Loan\n" +
+        "Crypto Card\n" +
+        "U2U Transfer\n" +
+        "Settings"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

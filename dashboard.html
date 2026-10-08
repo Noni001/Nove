@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard — NovaVest</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#101828;
+    padding-bottom:85px;
+}
+
+/* HEADER */
+
+.header{
+    height:68px;
+    background:#07111f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 17px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:800;
+}
+
+.brand-icon{
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:#10b981;
+    color:#03110c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.notification{
+    position:relative;
+    font-size:21px;
+    cursor:pointer;
+}
+
+.notification-badge{
+    position:absolute;
+    top:-5px;
+    right:-6px;
+    background:#ef4444;
+    color:white;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    font-size:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.menu-button{
+    width:37px;
+    height:37px;
+    border:1px solid rgba(255,255,255,.15);
+    background:#101e31;
+    color:white;
+    border-radius:10px;
+    font-size:19px;
+}
+
+/* CONTENT */
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px 15px;
+}
+
+.welcome{
+    margin-bottom:20px;
+}
+
+.welcome small{
+    color:#667085;
+}
+
+.welcome h1{
+    font-size:25px;
+    margin-top:5px;
+}
+
+/* STATUS */
+
+.status{
+    background:#fff8e7;
+    border:1px solid #f5d48a;
+    color:#825f12;
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:20px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* QUICK ACTIONS */
+
+.section-title{
+    font-size:17px;
+    margin-bottom:12px;
+}
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.quick-card{
+    background:white;
+    border:1px solid #e6eaf0;
+    border-radius:15px;
+    padding:17px;
+    text-decoration:none;
+    color:#101828;
+    box-shadow:0 3px 12px rgba(16,24,40,.04);
+}
+
+.quick-icon{
+    width:40px;
+    height:40px;
+    border-radius:11px;
+    background:#e8f8f2;
+    color:#059669;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.quick-card strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.quick-card span{
+    color:#667085;
+    font-size:12px;
+}
+
+/* BALANCE */
+
+.balance-card{
+    background:#07111f;
+    color:white;
+    border-radius:19px;
+    padding:22px;
+    margin-bottom:22px;
+    box-shadow:0 12px 30px rgba(7,17,31,.2);
+}
+
+.balance-label{
+    color:#9aa8ba;
+    font-size:13px;
+}
+
+.balance-value{
+    font-size:35px;
+    font-weight:800;
+    margin:9px 0 4px;
+}
+
+.balance-change{
+    color:#34d399;
+    font-size:13px;
+}
+
+/* BUTTON */
+
+.primary{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:13px;
+    background:#10b981;
+    color:#03110c;
+    text-decoration:none;
+    border:none;
+    border-radius:11px;
+    font-weight:800;
+    margin-top:17px;
+}
+
+/* PREMIUM */
+
+.premium-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.premium-title span{
+    background:#e8f8f2;
+    color:#059669;
+    padding:6px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.premium-card{
+    background:white;
+    border:1px solid #e6eaf0;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:22px;
+}
+
+.premium-card h3{
+    margin-bottom:8px;
+}
+
+.premium-card p{
+    color:#667085;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:11px;
+}
+
+.stat{
+    background:white;
+    border:1px solid #e6eaf0;
+    border-radius:14px;
+    padding:16px;
+}
+
+.stat-label{
+    color:#667085;
+    font-size:11px;
+    line-height:1.4;
+}
+
+.stat-value{
+    font-size:18px;
+    font-weight:800;
+    margin-top:8px;
+}
+
+/* SUPPORT */
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:78px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    z-index:90;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    z-index:100;
+}
+
+.bottom-nav a{
+    text-decoration:none;
+    color:#667085;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    gap:5px;
+}
+
+.bottom-nav a.active{
+    color:#059669;
+    font-weight:bold;
+}
+
+.nav-icon{
+    font-size:18px;
+}
+
+/* DESKTOP */
+
+@media(min-width:700px){
+
+    .quick-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .container{
+        padding:30px 25px;
+    }
+
+    .balance-card{
+        padding:30px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            N
+        </div>
+
+        NovaVest
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <div class="notification">
+
+            🔔
+
+            <span class="notification-badge">
+                3
+            </span>
+
+        </div>
+
+
+        <button
+            class="menu-button"
+            onclick="openMenu()"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main class="container">
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <small>
+            Welcome back
+        </small>
+
+        <h1>
+            Hello, Investor 👋
+        </h1>
+
+    </div>
+
+
+    <!-- ACCOUNT STATUS -->
+
+    <div class="status">
+
+        <strong>
+            Account verification required
+        </strong>
+
+        <br>
+
+        Complete your profile and verification
+        before using restricted account features.
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <h2 class="section-title">
+        Quick Actions
+    </h2>
+
+
+    <div class="quick-grid">
+
+
+        <a href="deposit.html" class="quick-card">
+
+            <div class="quick-icon">
+                +
+            </div>
+
+            <strong>
+                Deposit
+            </strong>
+
+            <span>
+                Fund your account
+            </span>
+
+        </a>
+
+
+        <a href="withdraw.html" class="quick-card">
+
+            <div class="quick-icon">
+                ↑
+            </div>
+
+            <strong>
+                Withdraw
+            </strong>
+
+            <span>
+                Request withdrawal
+            </span>
+
+        </a>
+
+
+        <a href="wallet.html" class="quick-card">
+
+            <div class="quick-icon">
+                $
+            </div>
+
+            <strong>
+                Wallet
+            </strong>
+
+            <span>
+                View balances
+            </span>
+
+        </a>
+
+
+        <a href="referrals.html" class="quick-card">
+
+            <div class="quick-icon">
+                ↗
+            </div>
+
+            <strong>
+                Referrals
+            </strong>
+
+            <span>
+                Invite & earn
+            </span>
+
+        </a>
+
+
+    </div>
+
+
+    <!-- BALANCE -->
+
+    <h2 class="section-title">
+        Wallet Balance
+    </h2>
+
+
+    <div class="balance-card">
+
+        <div class="balance-label">
+            Available balance
+        </div>
+
+        <div class="balance-value">
+            $0.00
+        </div>
+
+        <div class="balance-change">
+            Demo account
+        </div>
+
+        <a href="deposit.html" class="primary">
+            Add Funds
+        </a>
+
+    </div>
+
+
+    <!-- PREMIUM ACCOUNT -->
+
+    <div class="premium-title">
+
+        <h2 class="section-title">
+            Premium Account
+        </h2>
+
+        <span>
+            BASIC
+        </span>
+
+    </div>
+
+
+    <div class="premium-card">
+
+        <h3>
+            Your account
+        </h3>
+
+        <p>
+            Upgrade your account experience and access
+            additional platform features when available.
+        </p>
+
+        <a href="profile.html" class="primary">
+            Complete Profile
+        </a>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <h2 class="section-title">
+        Account Overview
+    </h2>
+
+
+    <div class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Active Deposit
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Active Profit
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Profits
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Pending Deposit
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Pending Withdrawal
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Withdrawal
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Referral Bonus
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Loan Balance
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Deposit
+            </div>
+
+            <div class="stat-value">
+                $0.00
+            </div>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- SUPPORT -->
+
+<div
+    class="support"
+    onclick="supportMessage()"
+>
+    💬
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+
+    <a href="dashboard.html" class="active">
+
+        <span class="nav-icon">
+            ⌂
+        </span>
+
+        Home
+
+    </a>
+
+
+    <a href="wallet.html">
+
+        <span class="nav-icon">
+            $
+        </span>
+
+        Wallet
+
+    </a>
+
+
+    <a href="deposit.html">
+
+        <span class="nav-icon">
+            +
+        </span>
+
+        Deposit
+
+    </a>
+
+
+    <a href="withdraw.html">
+
+        <span class="nav-icon">
+            ↑
+        </span>
+
+        Withdraw
+
+    </a>
+
+
+    <a href="transactions.html">
+
+        <span class="nav-icon">
+            ≡
+        </span>
+
+        Transactions
+
+    </a>
+
+
+    <a href="#" onclick="openMenu();return false;">
+
+        <span class="nav-icon">
+            ☰
+        </span>
+
+        Menu
+
+    </a>
+
+
+</nav>
+
+
+<script>
+
+function openMenu(){
+
+    alert(
+        "Menu will be connected to the full navigation system."
+    );
+
+}
+
+
+function supportMessage(){
+
+    alert(
+        "Support chat will be connected here."
+    );
+
+}
+
+</script>
+
+
+</body>
+</html>

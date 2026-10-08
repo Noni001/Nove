@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Loan - NovaVest</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fa;
+    color:#111827;
+    padding-bottom:90px;
+}
+
+.header{
+    background:#0a111e;
+    color:white;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    font-size:20px;
+    font-weight:800;
+}
+
+.header-icons{
+    display:flex;
+    gap:15px;
+    font-size:21px;
+}
+
+.container{
+    max-width:650px;
+    margin:auto;
+    padding:20px 16px;
+}
+
+.page-title{
+    font-size:27px;
+    margin-bottom:6px;
+}
+
+.subtitle{
+    color:#6b7280;
+    margin-bottom:20px;
+    line-height:1.5;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.loan-hero{
+    background:#0d1b2a;
+    color:white;
+}
+
+.loan-hero small{
+    color:#aeb8c5;
+}
+
+.loan-hero h2{
+    font-size:28px;
+    margin:8px 0;
+}
+
+.loan-hero p{
+    color:#cbd5e1;
+    line-height:1.5;
+}
+
+.info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.info-box{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+}
+
+.info-box small{
+    display:block;
+    color:#6b7280;
+    margin-bottom:6px;
+}
+
+.info-box strong{
+    font-size:17px;
+}
+
+label{
+    display:block;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:14px;
+    border:1px solid #d7dce3;
+    border-radius:10px;
+    font-size:15px;
+    margin-bottom:16px;
+    outline:none;
+    font-family:inherit;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#10b981;
+}
+
+.btn{
+    width:100%;
+    border:0;
+    background:#10b981;
+    color:white;
+    padding:15px;
+    border-radius:11px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.notice{
+    background:#fff8e7;
+    border-left:4px solid #f59e0b;
+}
+
+.notice h3{
+    margin-bottom:8px;
+}
+
+.notice p{
+    color:#6b7280;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.message{
+    display:none;
+    margin-top:14px;
+    padding:12px;
+    border-radius:10px;
+    background:#ecfdf5;
+    color:#047857;
+    line-height:1.4;
+    font-size:14px;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:72px;
+    background:white;
+    border-top:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:100;
+}
+
+.nav-item{
+    text-decoration:none;
+    color:#6b7280;
+    font-size:11px;
+    text-align:center;
+}
+
+.nav-item span{
+    display:block;
+    font-size:20px;
+    margin-bottom:3px;
+}
+
+.support{
+    position:fixed;
+    right:18px;
+    bottom:88px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#f97316;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    box-shadow:0 5px 18px rgba(0,0,0,.2);
+    z-index:90;
+}
+
+@media(min-width:700px){
+    .container{
+        padding-top:35px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        NovaVest
+    </div>
+
+    <div class="header-icons">
+        <span>🔔</span>
+        <span>☰</span>
+    </div>
+
+</header>
+
+<main class="container">
+
+    <h1 class="page-title">
+        Crypto Loan
+    </h1>
+
+    <p class="subtitle">
+        Submit a request for a crypto-backed loan through
+        the NovaVest loan application workflow.
+    </p>
+
+
+    <div class="card loan-hero">
+
+        <small>
+            Minimum Loan Request
+        </small>
+
+        <h2>
+            $10,000
+        </h2>
+
+        <p>
+            Loan requests are subject to eligibility,
+            verification, approval and applicable terms.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:15px;">
+            Loan Information
+        </h3>
+
+        <div class="info">
+
+            <div class="info-box">
+                <small>Loan Balance</small>
+                <strong>$0.00</strong>
+            </div>
+
+            <div class="info-box">
+                <small>Pending Request</small>
+                <strong>$0.00</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3 style="margin-bottom:18px;">
+            Request Crypto Loan
+        </h3>
+
+        <form id="loanForm">
+
+            <label for="amount">
+                Requested Amount
+            </label>
+
+            <input
+                type="number"
+                id="amount"
+                min="10000"
+                step="0.01"
+                placeholder="Minimum $10,000"
+                required
+            >
+
+            <label for="receiving">
+                Receiving Method
+            </label>
+
+            <select id="receiving" required>
+
+                <option value="">
+                    Select receiving method
+                </option>
+
+                <option value="crypto">
+                    Cryptocurrency Wallet
+                </option>
+
+                <option value="bank">
+                    Bank Transfer
+                </option>
+
+            </select>
+
+            <label for="wallet">
+                Wallet Address / Account Details
+            </label>
+
+            <input
+                type="text"
+                id="wallet"
+                placeholder="Enter receiving details"
+                required
+            >
+
+            <label for="purpose">
+                Loan Purpose
+            </label>
+
+            <textarea
+                id="purpose"
+                placeholder="Briefly describe the purpose of this loan"
+                required
+            ></textarea>
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Submit Loan Request
+            </button>
+
+            <div
+                class="message"
+                id="message"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <div class="card notice">
+
+        <h3>
+            Important Information
+        </h3>
+
+        <p>
+            This page is currently a frontend application
+            interface. It does not approve, issue or transfer
+            real loans.
+        </p>
+
+        <br>
+
+        <p>
+            A production loan service would require a secure
+            backend, identity verification, eligibility rules,
+            legally compliant loan terms and appropriate
+            financial-service infrastructure.
+        </p>
+
+    </div>
+
+</main>
+
+
+<div
+    class="support"
+    onclick="supportMessage()"
+>
+    💬
+</div>
+
+
+<nav class="bottom-nav">
+
+    <a href="dashboard.html" class="nav-item">
+        <span>⌂</span>
+        Home
+    </a>
+
+    <a href="wallet.html" class="nav-item">
+        <span>💳</span>
+        Wallet
+    </a>
+
+    <a href="deposit.html" class="nav-item">
+        <span>＋</span>
+        Deposit
+    </a>
+
+    <a href="withdraw.html" class="nav-item">
+        <span>↗</span>
+        Withdraw
+    </a>
+
+    <a href="transactions.html" class="nav-item">
+        <span>↔</span>
+        Transactions
+    </a>
+
+    <a href="#" class="nav-item" onclick="openMenu()">
+        <span>☰</span>
+        Menu
+    </a>
+
+</nav>
+
+
+<script>
+
+document.getElementById("loanForm").addEventListener(
+    "submit",
+    function(e){
+
+        e.preventDefault();
+
+        const amount =
+            Number(document.getElementById("amount").value);
+
+        const message =
+            document.getElementById("message");
+
+        if(amount < 10000){
+
+            message.style.display = "block";
+
+            message.innerHTML =
+                "The minimum loan request is $10,000.";
+
+            return;
+        }
+
+        message.style.display = "block";
+
+        message.innerHTML =
+            "Loan request interface is ready. The final application will submit this request to the secure backend for eligibility and review.";
+
+    }
+);
+
+
+function supportMessage(){
+
+    alert(
+        "NovaVest Support\n\n" +
+        "Support chat will be connected to the support system in the final version."
+    );
+
+}
+
+
+function openMenu(){
+
+    alert(
+        "NovaVest Menu\n\n" +
+        "Profile\n" +
+        "KYC Verification\n" +
+        "Referrals\n" +
+        "Crypto Loan\n" +
+        "Crypto Card\n" +
+        "U2U Transfer\n" +
+        "Settings"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

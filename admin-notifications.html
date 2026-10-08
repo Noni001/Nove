@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications - NovaVest Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fa;
+  color:#0d1b2a;
+  min-height:100vh;
+}
+
+.header{
+  background:#0a111e;
+  color:white;
+  min-height:68px;
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10b981;
+}
+
+.admin-badge{
+  font-size:9px;
+  color:#10b981;
+  border:1px solid #10b981;
+  padding:4px 7px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.notification{
+  position:relative;
+  background:none;
+  border:0;
+  color:white;
+  font-size:21px;
+}
+
+.badge{
+  position:absolute;
+  top:-5px;
+  right:-7px;
+  background:#ef4444;
+  color:white;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.menu-button{
+  background:none;
+  border:0;
+  color:white;
+  font-size:25px;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  display:none;
+  width:245px;
+  background:#0d1726;
+  color:white;
+  padding:20px 12px;
+  flex-shrink:0;
+}
+
+.sidebar-title{
+  color:#718096;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:1px;
+  margin:14px 10px 8px;
+}
+
+.side-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 11px;
+  color:#aab5c4;
+  text-decoration:none;
+  border-radius:9px;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.side-link:hover,
+.side-link.active{
+  background:#122338;
+  color:white;
+}
+
+.side-link.active{
+  border-left:3px solid #10b981;
+}
+
+.side-icon{
+  width:22px;
+  text-align:center;
+  font-size:17px;
+}
+
+.main{
+  flex:1;
+  width:100%;
+  max-width:1450px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.page-heading{
+  margin-bottom:20px;
+}
+
+.page-heading h1{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.page-heading p{
+  color:#758092;
+  font-size:13px;
+}
+
+.grid{
+  display:grid;
+  gap:16px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  padding:17px;
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+}
+
+.card-title{
+  font-size:15px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.card-subtitle{
+  color:#7b8490;
+  font-size:11px;
+  line-height:1.5;
+  margin-bottom:16px;
+}
+
+label{
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.input,
+.select,
+.textarea{
+  width:100%;
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  font-size:12px;
+  margin-bottom:13px;
+  background:white;
+  color:#0d1b2a;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus{
+  border-color:#10b981;
+}
+
+.textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.radio-group{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:13px;
+}
+
+.radio-option{
+  border:1px solid #dce2e8;
+  border-radius:10px;
+  padding:11px;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:700;
+}
+
+.radio-option input{
+  margin-right:6px;
+}
+
+.primary-button{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  padding:13px;
+  background:#10b981;
+  color:white;
+  font-weight:800;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.primary-button:hover{
+  background:#059669;
+}
+
+.history-item{
+  border:1px solid #edf0f3;
+  border-radius:11px;
+  padding:13px;
+  margin-bottom:9px;
+}
+
+.history-top{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.history-icon{
+  width:37px;
+  height:37px;
+  border-radius:9px;
+  background:#ecfdf5;
+  color:#047857;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.history-info{
+  flex:1;
+}
+
+.history-title{
+  font-size:12px;
+  font-weight:800;
+}
+
+.history-meta{
+  color:#87919e;
+  font-size:9px;
+  margin-top:4px;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:12px;
+  font-size:8px;
+  font-weight:800;
+}
+
+.sent{
+  background:#ecfdf5;
+  color:#047857;
+}
+
+.scheduled{
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.demo{
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+
+.history-body{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #edf0f3;
+  color:#657181;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.notice{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  color:#92400e;
+  border-radius:12px;
+  padding:13px;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:15px;
+}
+
+.quick-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.quick-button{
+  border:1px solid #dce2e8;
+  background:#f8fafc;
+  padding:11px;
+  border-radius:9px;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.quick-button:hover{
+  border-color:#10b981;
+}
+
+.mobile-menu{
+  display:none;
+  position:fixed;
+  inset:68px 0 0 0;
+  background:#0d1726;
+  z-index:90;
+  padding:18px 15px;
+  overflow-y:auto;
+}
+
+.mobile-menu.open{
+  display:block;
+}
+
+.mobile-menu a{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:15px 12px;
+  color:#dbe3ec;
+  text-decoration:none;
+  border-bottom:1px solid #1c2a3c;
+  font-size:14px;
+}
+
+.mobile-logout{
+  color:#f87171 !important;
+}
+
+.logout-button{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#fff1f2;
+  color:#dc2626;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+@media(min-width:700px){
+
+  .sidebar{
+    display:block;
+  }
+
+  .menu-button{
+    display:none;
+  }
+
+  .main{
+    padding:28px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+    align-items:start;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="logo">
+      Nova<span>Vest</span>
+    </div>
+
+    <div class="admin-badge">
+      ADMIN
+    </div>
+
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      class="notification"
+      onclick="showNotifications()"
+    >
+      🔔
+      <span class="badge">3</span>
+    </button>
+
+    <button
+      class="menu-button"
+      onclick="toggleMobileMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-title">
+      Overview
+    </div>
+
+    <a href="admin.html" class="side-link">
+      <span class="side-icon">▦</span>
+      Dashboard
+    </a>
+
+
+    <div class="sidebar-title">
+      Users
+    </div>
+
+    <a href="admin-users.html" class="side-link">
+      <span class="side-icon">👥</span>
+      Users
+    </a>
+
+    <a href="admin-kyc.html" class="side-link">
+      <span class="side-icon">🛡️</span>
+      KYC Review
+    </a>
+
+
+    <div class="sidebar-title">
+      Finance
+    </div>
+
+    <a href="admin-transactions.html" class="side-link">
+      <span class="side-icon">↔</span>
+      Transactions
+    </a>
+
+    <a href="admin-adjustments.html" class="side-link">
+      <span class="side-icon">＋</span>
+      Account Adjustments
+    </a>
+
+
+    <div class="sidebar-title">
+      Communication
+    </div>
+
+    <a href="admin-notifications.html" class="side-link active">
+      <span class="side-icon">🔔</span>
+      Notifications
+    </a>
+
+
+    <div class="sidebar-title">
+      System
+    </div>
+
+    <a href="admin-settings.html" class="side-link">
+      <span class="side-icon">⚙</span>
+      Settings
+    </a>
+
+
+    <button
+      class="logout-button"
+      onclick="logoutAdmin()"
+    >
+      Log Out
+    </button>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="page-heading">
+
+      <h1>Notifications</h1>
+
+      <p>
+        Send and manage legitimate user notifications.
+      </p>
+
+    </div>
+
+
+    <div class="grid">
+
+
+      <!-- CREATE NOTIFICATION -->
+
+      <section class="card">
+
+        <div class="card-title">
+          Create Notification
+        </div>
+
+        <div class="card-subtitle">
+          Send an informational notification to a specific user
+          or a selected group.
+        </div>
+
+
+        <label>
+          Recipient
+        </label>
+
+        <select
+          class="select"
+          id="recipient"
+        >
+
+          <option value="specific">
+            Specific User
+          </option>
+
+          <option value="all">
+            All Users
+          </option>
+
+          <option value="verified">
+            KYC Verified Users
+          </option>
+
+          <option value="pending">
+            Users With Pending Actions
+          </option>
+
+        </select>
+
+
+        <label>
+          Username / User ID
+        </label>
+
+        <input
+          type="text"
+          id="username"
+          class="input"
+          placeholder="@username or user ID"
+        >
+
+
+        <label>
+          Notification Type
+        </label>
+
+        <select
+          class="select"
+          id="notificationType"
+        >
+
+          <option>
+            Account
+          </option>
+
+          <option>
+            KYC
+          </option>
+
+          <option>
+            Deposit
+          </option>
+
+          <option>
+            Withdrawal
+          </option>
+
+          <option>
+            Security
+          </option>
+
+          <option>
+            System
+          </option>
+
+        </select>
+
+
+        <label>
+          Title
+        </label>
+
+        <input
+          type="text"
+          id="title"
+          class="input"
+          placeholder="Notification title"
+        >
+
+
+        <label>
+          Message
+        </label>
+
+        <textarea
+          id="message"
+          class="textarea"
+          placeholder="Write the notification message..."
+        ></textarea>
+
+
+        <button
+          class="primary-button"
+          onclick="sendNotification()"
+        >
+          Send Notification
+        </button>
+
+      </section>
+
+
+      <!-- QUICK ACTIONS -->
+
+      <section class="card">
+
+        <div class="card-title">
+          Quick Notifications
+        </div>
+
+        <div class="card-subtitle">
+          Use these templates for common legitimate account events.
+        </div>
+
+
+        <div class="quick-actions">
+
+          <button
+            class="quick-button"
+            onclick="useTemplate('KYC Reminder','Please complete your KYC verification to access features that require identity verification.')"
+          >
+            🛡️ KYC Reminder
+          </button>
+
+
+          <button
+            class="quick-button"
+            onclick="useTemplate('Security Alert','A security-related event requires your attention. Please review your account settings.')"
+          >
+            🔐 Security Alert
+          </button>
+
+
+          <button
+            class="quick-button"
+            onclick="useTemplate('Deposit Update','Your deposit request has been updated. Please check your transaction history for the latest status.')"
+          >
+            💳 Deposit Update
+          </button>
+
+
+          <button
+            class="quick-button"
+            onclick="useTemplate('Withdrawal Update','Your withdrawal request has been updated. Please check your transaction history for the latest status.')"
+          >
+            💸 Withdrawal Update
+          </button>
+
+        </div>
+
+
+        <div class="notice">
+
+          Notifications must describe genuine account events or
+          legitimate system information. Do not use notifications
+          to fabricate deposits, profits, withdrawals, investment
+          returns, or other financial activity.
+
+        </div>
+
+      </section>
+
+
+      <!-- HISTORY -->
+
+      <section class="card">
+
+        <div class="card-title">
+          Notification History
+        </div>
+
+        <div class="card-subtitle">
+          Recent notification records.
+        </div>
+
+
+        <div class="history-item">
+
+          <div class="history-top">
+
+            <div class="history-icon">
+              🔔
+            </div>
+
+            <div class="history-info">
+
+              <div class="history-title">
+                KYC verification reminder
+              </div>
+
+              <div class="history-meta">
+                Demo User • Demo Record
+              </div>
+
+            </div>
+
+            <span class="status demo">
+              DEMO
+            </span>
+
+          </div>
+
+
+          <div class="history-body">
+
+            Please complete your KYC verification to access
+            features that require identity verification.
+
+          </div>
+
+        </div>
+
+
+        <div class="history-item">
+
+          <div class="history-top">
+
+            <div class="history-icon">
+              🔐
+            </div>
+
+            <div class="history-info">
+
+              <div class="history-title">
+                Security notification
+              </div>
+
+              <div class="history-meta">
+                Sample User • Demo Record
+              </div>
+
+            </div>
+
+            <span class="status demo">
+              DEMO
+            </span>
+
+          </div>
+
+
+          <div class="history-body">
+
+            This is a demonstration notification record.
+            Production notifications will be stored by the backend.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- DELIVERY -->
+
+      <section class="card">
+
+        <div class="card-title">
+          Delivery Channels
+        </div>
+
+        <div class="card-subtitle">
+          Choose how users may receive notifications in production.
+        </div>
+
+
+        <div class="radio-group">
+
+          <label class="radio-option">
+
+            <input
+              type="checkbox"
+              checked
+            >
+
+            In-App
+
+          </label>
+
+
+          <label class="radio-option">
+
+            <input
+              type="checkbox"
+            >
+
+            Email
+
+          </label>
+
+
+          <label class="radio-option">
+
+            <input
+              type="checkbox"
+            >
+
+            SMS
+
+          </label>
+
+
+          <label class="radio-option">
+
+            <input
+              type="checkbox"
+            >
+
+            Push
+
+          </label>
+
+        </div>
+
+
+        <div class="notice">
+
+          Email, SMS, and push delivery require properly configured
+          third-party services and verified sender accounts.
+          They will not be simulated as successful in the frontend.
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<div
+  class="mobile-menu"
+  id="mobileMenu"
+>
+
+  <a href="admin.html">
+    ▦ &nbsp; Dashboard
+  </a>
+
+  <a href="admin-users.html">
+    👥 &nbsp; Users
+  </a>
+
+  <a href="admin-kyc.html">
+    🛡️ &nbsp; KYC Review
+  </a>
+
+  <a href="admin-transactions.html">
+    ↔ &nbsp; Transactions
+  </a>
+
+  <a href="admin-adjustments.html">
+    ＋ &nbsp; Account Adjustments
+  </a>
+
+  <a href="admin-notifications.html">
+    🔔 &nbsp; Notifications
+  </a>
+
+  <a href="admin-settings.html">
+    ⚙ &nbsp; Settings
+  </a>
+
+  <a
+    href="#"
+    class="mobile-logout"
+    onclick="logoutAdmin();return false;"
+  >
+    ↪ &nbsp; Log Out
+  </a>
+
+</div>
+
+
+<script>
+
+function toggleMobileMenu(){
+
+  document
+    .getElementById("mobileMenu")
+    .classList.toggle("open");
+
+}
+
+
+function showNotifications(){
+
+  alert(
+    "Admin notification center."
+  );
+
+}
+
+
+function useTemplate(title,message){
+
+  document.getElementById("title").value =
+    title;
+
+  document.getElementById("message").value =
+    message;
+
+  document
+    .getElementById("title")
+    .focus();
+
+}
+
+
+function sendNotification(){
+
+  const recipient =
+    document.getElementById("recipient").value;
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const title =
+    document.getElementById("title").value.trim();
+
+  const message =
+    document.getElementById("message").value.trim();
+
+
+  if(
+    recipient === "specific" &&
+    username === ""
+  ){
+
+    alert(
+      "Enter a username or user ID."
+    );
+
+    return;
+
+  }
+
+
+  if(title === ""){
+
+    alert(
+      "Enter a notification title."
+    );
+
+    return;
+
+  }
+
+
+  if(message === ""){
+
+    alert(
+      "Enter a notification message."
+    );
+
+    return;
+
+  }
+
+
+  alert(
+    "Demo notification prepared.\n\n" +
+    "Recipient: " +
+    (recipient === "specific" ? username : recipient) +
+    "\n\nNo notification has been sent yet.\n\nThe production backend will handle authenticated delivery and notification history."
+  );
+
+}
+
+
+function logoutAdmin(){
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to log out of the admin panel?"
+    );
+
+  if(confirmed){
+
+    localStorage.removeItem("nova_admin_session");
+
+    window.location.href =
+      "admin-login.html";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
