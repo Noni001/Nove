@@ -963,6 +963,19 @@ body{
 
 <script>
 
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function loadLiveUsers(){
+ const a=await supabaseClient.auth.getUser();
+ if(!a.data.user){location.href="admin-login.html";return;}
+ const p=await supabaseClient.from("profiles").select("role").eq("id",a.data.user.id).single();
+ if(p.error||p.data.role!=="admin"){location.href="dashboard.html";return;}
+ const r=await supabaseClient.from("profiles").select("id,full_name,username,role,created_at").order("created_at",{ascending:false});
+ const list=document.getElementById("userList");
+ if(r.error||!list)return;
+ list.innerHTML=(r.data||[]).map(u=>'<div class="user-card"><div class="user-top"><div class="avatar">'+((u.full_name||u.username||"U").slice(0,2).toUpperCase())+'</div><div class="user-info"><div class="user-name">'+(u.full_name||"Investor")+'</div><div class="username">@'+(u.username||"user")+'</div><div class="user-email">'+u.id+'</div></div><span class="status active">'+(u.role||"user").toUpperCase()+'</span></div><div class="user-details"><div class="detail"><div class="detail-label">ROLE</div><div class="detail-value">'+(u.role||"user")+'</div></div><div class="detail"><div class="detail-label">MEMBER SINCE</div><div class="detail-value">'+new Date(u.created_at).toLocaleDateString()+'</div></div></div></div>').join("");
+}
+loadLiveUsers();
+
 let currentFilter = "all";
 
 
