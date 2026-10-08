@@ -749,89 +749,9 @@ label{
       <!-- HISTORY -->
 
       <section class="card">
-
-        <div class="card-title">
-          Notification History
-        </div>
-
-        <div class="card-subtitle">
-          Recent notification records.
-        </div>
-
-
-        <div class="history-item">
-
-          <div class="history-top">
-
-            <div class="history-icon">
-              🔔
-            </div>
-
-            <div class="history-info">
-
-              <div class="history-title">
-                KYC verification reminder
-              </div>
-
-              <div class="history-meta">
-                Demo User • Demo Record
-              </div>
-
-            </div>
-
-            <span class="status demo">
-              DEMO
-            </span>
-
-          </div>
-
-
-          <div class="history-body">
-
-            Please complete your KYC verification to access
-            features that require identity verification.
-
-          </div>
-
-        </div>
-
-
-        <div class="history-item">
-
-          <div class="history-top">
-
-            <div class="history-icon">
-              🔐
-            </div>
-
-            <div class="history-info">
-
-              <div class="history-title">
-                Security notification
-              </div>
-
-              <div class="history-meta">
-                Sample User • Demo Record
-              </div>
-
-            </div>
-
-            <span class="status demo">
-              DEMO
-            </span>
-
-          </div>
-
-
-          <div class="history-body">
-
-            This is a demonstration notification record.
-            Production notifications will be stored by the backend.
-
-          </div>
-
-        </div>
-
+        <div class="card-title">Notification History</div>
+        <div class="card-subtitle">Recent notification records.</div>
+        <div id="historyContainer"><div class="notice">Loading notification history...</div></div>
       </section>
 
 
@@ -1028,11 +948,20 @@ async function sendNotification(){
 
 async function loadNotificationHistory(){
   const {data:{session}}=await window.supabaseClient.auth.getSession();
-  if(!session)return;
+  if(!session){window.location.href="admin-login.html";return;}
   const {data:profile}=await window.supabaseClient.from("profiles").select("role").eq("id",session.user.id).single();
   if(profile?.role!=="admin"){window.location.href="admin-login.html";return;}
+  try{
+    const res=await fetch("https://brjcxksvpuasywlxhrgg.supabase.co/functions/v1/admin-list-notifications",{headers:{Authorization:"Bearer "+session.access_token}});
+    const body=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(body.error||"Unable to load notification history.");
+    const rows=body.notifications||body.data||[];
+    const box=document.getElementById("historyContainer");
+    if(!rows.length){box.innerHTML='<div class="notice">No notification records yet.</div>';return;}
+    box.innerHTML=rows.map(n=>'<div class="history-item"><div class="history-top"><div class="history-icon">🔔</div><div class="history-info"><div class="history-title">'+escapeHtml(n.title)+'</div><div class="history-meta">'+escapeHtml(n.user_id||"All users")+' • '+new Date(n.created_at).toLocaleString()+'</div></div><span class="status">'+(n.is_read?"READ":"UNREAD")+'</span></div><div class="history-body">'+escapeHtml(n.message)+'</div></div>').join("");
+  }catch(e){document.getElementById("historyContainer").innerHTML='<div class="notice">'+escapeHtml(e.message)+'</div>';}
 }
-
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
 
 
 async function logoutAdmin(){
