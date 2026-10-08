@@ -519,6 +519,8 @@ body{
 
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -1043,16 +1045,7 @@ body{
     </div>
 
 
-    <div class="notice">
-
-      <strong>Important:</strong>
-      The transactions above are frontend demonstration records.
-      The production version will only display genuine transactions
-      recorded by the secure backend ledger. Approvals and rejections
-      will require authenticated administrator permissions and will
-      be recorded in an audit log.
-
-    </div>
+    <div class="notice"><strong>Live backend:</strong> This page now loads genuine deposit, withdrawal and ledger records from Supabase. Approvals and rejections are authorized server-side, update balances atomically, create ledger entries, notify the user and write an audit record.</div>
 
   </main>
 
@@ -1106,191 +1099,118 @@ body{
 
 
 <script>
+let currentStatus="all";
+let liveRequests=[];
 
-let currentStatus = "all";
+function toggleMobileMenu(){document.getElementById("mobileMenu").classList.toggle("open");}
+function showNotifications(){window.location.href="admin-notifications.html";}
 
-
-function toggleMobileMenu(){
-
-  document
-    .getElementById("mobileMenu")
-    .classList.toggle("open");
-
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 }
 
-
-function showNotifications(){
-
-  alert(
-    "Admin notifications will be connected to the backend."
-  );
-
+async function requireAdmin(){
+  const {data:{session}}=await window.supabaseClient.auth.getSession();
+  if(!session){window.location.href="admin-login.html";return null;}
+  const {data:profile,error}=await window.supabaseClient.from("profiles").select("role").eq("id",session.user.id).single();
+  if(error||profile?.role!=="admin"){alert("Administrator access required.");window.location.href="dashboard.html";return null;}
+  return session.user;
 }
-
 
 function setStatus(status,button){
-
-  currentStatus = status;
-
-  document
-    .querySelectorAll(".filter")
-    .forEach(function(item){
-
-      item.classList.remove("active");
-
-    });
-
-  button.classList.add("active");
-
+  currentStatus=status;
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  if(button) button.classList.add("active");
   filterTransactions();
-
 }
-
 
 function filterTransactions(){
-
-  const search =
-    document
-      .getElementById("searchInput")
-      .value
-      .toLowerCase()
-      .trim();
-
-  const type =
-    document
-      .getElementById("typeSelect")
-      .value;
-
-  const transactions =
-    document.querySelectorAll(".transaction-card");
-
-  let visible = 0;
-
-
-  transactions.forEach(function(transaction){
-
-    const searchable =
-      transaction
-        .getAttribute("data-search")
-        .toLowerCase();
-
-    const transactionType =
-      transaction.getAttribute("data-type");
-
-    const transactionStatus =
-      transaction.getAttribute("data-status");
-
-
-    const matchesSearch =
-      searchable.includes(search);
-
-    const matchesType =
-      type === "all" ||
-      transactionType === type;
-
-    const matchesStatus =
-      currentStatus === "all" ||
-      transactionStatus === currentStatus;
-
-
-    if(
-      matchesSearch &&
-      matchesType &&
-      matchesStatus
-    ){
-
-      transaction.style.display = "block";
-      visible++;
-
-    }else{
-
-      transaction.style.display = "none";
-
-    }
-
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+  const type=document.getElementById("typeSelect").value;
+  const cards=document.querySelectorAll(".transaction-card");
+  let visible=0;
+  cards.forEach(card=>{
+    const okSearch=card.dataset.search.includes(search);
+    const okType=type==="all"||card.dataset.type===type;
+    const okStatus=currentStatus==="all"||card.dataset.status===currentStatus;
+    card.style.display=okSearch&&okType&&okStatus?"block":"none";
+    if(okSearch&&okType&&okStatus) visible++;
   });
-
-
-  document
-    .getElementById("emptyState")
-    .style.display =
-      visible === 0 ? "block" : "none";
-
+  document.getElementById("emptyState").style.display=visible?"none":"block";
 }
 
-
-function viewTransaction(id){
-
-  alert(
-    "Transaction: " + id +
-    "\n\nDetailed transaction information will be loaded from the secure backend."
-  );
-
+async function loadLiveRequests(){
+  const user=await requireAdmin(); if(!user)return;
+  const [{data:deps,error:de}, {data:wds,error:we}, {data:txs,error:te}]=await Promise.all([
+    window.supabaseClient.from("deposits").select("id,user_id,amount,method,status,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}),
+    window.supabaseClient.from("withdrawals").select("id,user_id,amount,method,destination,status,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}),
+    window.supabaseClient.from("transactions").select("id,user_id,type,amount,status,description,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}).limit(100)
+  ]);
+  if(de||we||te){alert("Could not load finance records.");return;}
+  liveRequests=[
+    ...(deps||[]).map(x=>({...x,record_type:"deposit",display_type:"Deposit"})),
+    ...(wds||[]).map(x=>({...x,record_type:"withdrawal",display_type:"Withdrawal"})),
+    ...(txs||[]).map(x=>({...x,record_type:"ledger",display_type:x.type}))
+  ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  const list=document.getElementById("transactionList");
+  list.innerHTML=liveRequests.map(x=>{
+    const name=x.profiles?.full_name||"User";
+    const amount=Number(x.amount||0).toFixed(2);
+    const pending=x.status==="pending" && (x.record_type==="deposit"||x.record_type==="withdrawal");
+    const signed=x.record_type==="withdrawal"||x.type==="withdrawal"?"-":"+";
+    const actions=pending
+      ? `<div class="actions">
+          <button class="action-button approve" onclick="reviewLive('${x.record_type}','${x.id}','approve')">Approve</button>
+          <button class="action-button reject" onclick="reviewLive('${x.record_type}','${x.id}','reject')">Reject</button>
+          <button class="action-button view" onclick="viewLive('${x.id}')">Details</button>
+        </div>`
+      : `<div class="actions"><button class="action-button view" onclick="viewLive('${x.id}')">Details</button></div>`;
+    return `<div class="transaction-card" data-search="${escapeHtml((name+" "+x.user_id+" "+(x.reference||"")+" "+x.display_type+" "+(x.description||"")).toLowerCase())}" data-type="${x.record_type}" data-status="${x.status}">
+      <div class="transaction-top">
+        <div><div class="transaction-title">${escapeHtml(x.display_type)}</div><div class="transaction-meta">${escapeHtml(name)} • ${new Date(x.created_at).toLocaleString()}</div></div>
+        <div class="transaction-amount ${x.record_type==="withdrawal"?"negative":"positive"}">${signed}$${amount}</div>
+      </div>
+      <div class="details">
+        <div class="detail"><div class="detail-label">Status</div><div class="detail-value"><span class="status ${x.status}">${escapeHtml(x.status.toUpperCase())}</span></div></div>
+        <div class="detail"><div class="detail-label">Reference</div><div class="detail-value">${escapeHtml(x.reference||"—")}</div></div>
+        <div class="detail"><div class="detail-label">Method</div><div class="detail-value">${escapeHtml(x.method||"Ledger")}</div></div>
+      </div>
+      ${actions}
+    </div>`;
+  }).join("");
+  filterTransactions();
 }
 
-
-function reviewTransaction(id,action){
-
-  if(action === "approve"){
-
-    const confirmed =
-      confirm(
-        "Approve transaction " +
-        id +
-        "?\n\nIn production, this action will require authorization and will create an audit record."
-      );
-
-    if(confirmed){
-
-      alert(
-        "Demo action only.\n\nNo real funds were moved."
-      );
-
-    }
-
-  }
-
-
-  if(action === "reject"){
-
-    const confirmed =
-      confirm(
-        "Reject transaction " +
-        id +
-        "?"
-      );
-
-    if(confirmed){
-
-      alert(
-        "Demo action only.\n\nNo real transaction was changed."
-      );
-
-    }
-
-  }
-
+async function reviewLive(type,id,action){
+  const endpoint=window.NOVAVEST_SUPABASE_URL+"/functions/v1/admin-finance-action";
+  const requestAction=(type==="deposit"?"":"")+(action==="approve"?"approve_":"reject_")+type;
+  const reason=prompt(action==="reject"?"Enter a rejection reason (required):":"Optional internal note:");
+  if(action==="reject"&&!reason?.trim()) return;
+  if(!confirm((action==="approve"?"Approve ":"Reject ")+type+" request?")) return;
+  const {data:{session}}=await window.supabaseClient.auth.getSession();
+  if(!session){alert("Session expired.");return;}
+  const res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:requestAction,request_id:id,reason:reason||null})});
+  const body=await res.json().catch(()=>({}));
+  if(!res.ok){alert(body.error||"Action failed.");return;}
+  alert("Done. The wallet, ledger, notification and audit log were updated.");
+  loadLiveRequests();
 }
 
-
-function logoutAdmin(){
-
-  const confirmed =
-    confirm(
-      "Are you sure you want to log out of the admin panel?"
-    );
-
-  if(confirmed){
-
-    localStorage.removeItem("nova_admin_session");
-
-    window.location.href =
-      "admin-login.html";
-
-  }
-
+function viewLive(id){
+  const x=liveRequests.find(v=>v.id===id); if(!x)return;
+  alert("Record ID: "+x.id+"\nUser: "+(x.profiles?.full_name||"User")+"\nAmount: $"+Number(x.amount||0).toFixed(2)+"\nStatus: "+x.status+"\nReference: "+(x.reference||"—"));
 }
 
+async function logoutAdmin(){
+  await window.supabaseClient.auth.signOut();
+  window.location.href="admin-login.html";
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("searchInput").addEventListener("input",filterTransactions);
+  document.getElementById("typeSelect").addEventListener("change",filterTransactions);
+  loadLiveRequests();
+});
 </script>
 
 </body>
