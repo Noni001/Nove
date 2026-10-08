@@ -214,7 +214,7 @@ select:focus{
     }
 }
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script></head>
 
 <body>
 
@@ -375,45 +375,24 @@ select:focus{
 </nav>
 
 <script>
-
-document.getElementById("withdrawForm").addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    const message = document.getElementById("message");
-
-    message.style.display = "block";
-
-    message.innerHTML =
-        "Withdrawal request interface is ready. Complete KYC and connect the form to the secure backend/payment system before processing real withdrawals.";
-
-});
-
-function supportMessage(){
-
-    alert(
-        "NovaVest Support\n\n" +
-        "Support chat will be connected to the support system in the final version."
-    );
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function init(){
+ const g=await supabaseClient.auth.getUser(); if(!g.data.user){location.href="login.html";return;}
+ const w=await supabaseClient.from("wallets").select("balance,promotional_credits").eq("user_id",g.data.user.id).single();
+ if(!w.error) document.querySelector(".balance h2").textContent="$"+Number(w.data.balance||0).toFixed(2);
+ document.getElementById("withdrawForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const msg=document.getElementById("message"); const amount=Number(document.getElementById("amount").value);
+  const method=document.getElementById("method").value; const destination=document.getElementById("destination").value.trim();
+  if(!amount||amount<=0||!method||!destination){msg.style.display="block";msg.textContent="Complete all fields.";return;}
+  const {data,error}=await supabaseClient.rpc("create_withdrawal_request",{p_user_id:g.data.user.id,p_amount:amount,p_method:method,p_destination:destination,p_reference:"WDR-"+Date.now()});
+  msg.style.display="block"; msg.textContent=error?error.message:"Withdrawal request submitted and is pending review.";
+  if(!error)e.target.reset();
+ });
 }
-
-function openMenu(){
-
-    alert(
-        "NovaVest Menu\n\n" +
-        "Profile\n" +
-        "KYC Verification\n" +
-        "Referrals\n" +
-        "Crypto Loan\n" +
-        "Crypto Card\n" +
-        "U2U Transfer\n" +
-        "Settings"
-    );
-
-}
-
-</script>
+function supportMessage(){alert("NovaVest Support");}
+function openMenu(){alert("NovaVest Menu");}
+document.addEventListener("DOMContentLoaded",init);
+</script>>
 
 </body>
 </html>
