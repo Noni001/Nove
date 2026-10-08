@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Notifications - NovaVest Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);</script>
 
 <style>
 *{
@@ -609,7 +612,7 @@ label{
           type="text"
           id="username"
           class="input"
-          placeholder="@username or user ID"
+          placeholder="Paste the user UUID"
         >
 
 
@@ -992,85 +995,54 @@ function useTemplate(title,message){
 }
 
 
-function sendNotification(){
 
-  const recipient =
-    document.getElementById("recipient").value;
+async function sendNotification(){
+  const recipient=document.getElementById("recipient").value;
+  const userId=document.getElementById("username").value.trim();
+  const type=document.getElementById("notificationType").value;
+  const title=document.getElementById("title").value.trim();
+  const message=document.getElementById("message").value.trim();
 
-  const username =
-    document.getElementById("username").value.trim();
+  if(recipient==="specific"&&!userId){alert("Enter the user's UUID.");return;}
+  if(!title){alert("Enter a notification title.");return;}
+  if(!message){alert("Enter a notification message.");return;}
 
-  const title =
-    document.getElementById("title").value.trim();
+  const confirmed=confirm("Send this legitimate notification?\\n\\nRecipient: "+(recipient==="specific"?userId:"All users")+"\\nTitle: "+title);
+  if(!confirmed)return;
 
-  const message =
-    document.getElementById("message").value.trim();
+  const {data:{session}}=await window.supabaseClient.auth.getSession();
+  if(!session){alert("Your admin session has expired. Please log in again.");window.location.href="admin-login.html";return;}
 
+  try{
+    const res=await fetch("https://brjcxksvpuasywlxhrgg.supabase.co/functions/v1/admin-send-notification",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},
+      body:JSON.stringify({recipient,user_id:recipient==="specific"?userId:null,type,title,message})
+    });
+    const body=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(body.error||"Notification could not be sent.");
+    alert("Notification sent successfully to "+(body.count||0)+" user(s).");
+    window.location.reload();
+  }catch(err){alert(err.message||"Unable to send notification.");}
+}
 
-  if(
-    recipient === "specific" &&
-    username === ""
-  ){
-
-    alert(
-      "Enter a username or user ID."
-    );
-
-    return;
-
-  }
-
-
-  if(title === ""){
-
-    alert(
-      "Enter a notification title."
-    );
-
-    return;
-
-  }
-
-
-  if(message === ""){
-
-    alert(
-      "Enter a notification message."
-    );
-
-    return;
-
-  }
-
-
-  alert(
-    "Demo notification prepared.\n\n" +
-    "Recipient: " +
-    (recipient === "specific" ? username : recipient) +
-    "\n\nNo notification has been sent yet.\n\nThe production backend will handle authenticated delivery and notification history."
-  );
-
+async function loadNotificationHistory(){
+  const {data:{session}}=await window.supabaseClient.auth.getSession();
+  if(!session)return;
+  const {data:profile}=await window.supabaseClient.from("profiles").select("role").eq("id",session.user.id).single();
+  if(profile?.role!=="admin"){window.location.href="admin-login.html";return;}
 }
 
 
-function logoutAdmin(){
 
-  const confirmed =
-    confirm(
-      "Are you sure you want to log out of the admin panel?"
-    );
-
-  if(confirmed){
-
-    localStorage.removeItem("nova_admin_session");
-
-    window.location.href =
-      "admin-login.html";
-
-  }
-
+async function logoutAdmin(){
+  const confirmed=confirm("Are you sure you want to log out of the admin panel?");
+  if(!confirmed)return;
+  await window.supabaseClient.auth.signOut();
+  window.location.href="admin-login.html";
 }
 
+document.addEventListener("DOMContentLoaded",loadNotificationHistory);
 </script>
 
 </body>
