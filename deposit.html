@@ -361,6 +361,7 @@ select:focus{
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -829,144 +830,21 @@ select:focus{
 
 
 <script>
-
-let selectedPlan = "";
-
-
-function selectPlan(element, plan){
-
-    document
-        .querySelectorAll(".plan")
-        .forEach(function(item){
-
-            item.classList.remove("selected");
-
-        });
-
-
-    element.classList.add("selected");
-
-
-    selectedPlan = plan;
-
-
-    document.getElementById("selectedPlan").value =
-        plan;
-
-}
-
-
-function updateAmount(){
-
-    const amount =
-        parseFloat(
-            document.getElementById("amount").value
-        ) || 0;
-
-
-    document.getElementById("amountPreview")
-        .textContent =
-        "$" + amount.toLocaleString(
-            "en-US",
-            {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-            }
-        );
-
-}
-
-
-document
-.getElementById("depositForm")
-.addEventListener("submit",function(event){
-
-    event.preventDefault();
-
-
-    const message =
-        document.getElementById("message");
-
-    const amount =
-        parseFloat(
-            document.getElementById("amount").value
-        );
-
-    const paymentMode =
-        document.getElementById("paymentMode").value;
-
-
-    if(!selectedPlan){
-
-        message.textContent =
-            "Please select an investment plan first.";
-
-        message.className =
-            "message error";
-
-        message.style.display =
-            "block";
-
-        return;
-
-    }
-
-
-    if(!amount || amount <= 0){
-
-        message.textContent =
-            "Please enter a valid amount.";
-
-        message.className =
-            "message error";
-
-        message.style.display =
-            "block";
-
-        return;
-
-    }
-
-
-    if(!paymentMode){
-
-        message.textContent =
-            "Please select a payment mode.";
-
-        message.className =
-            "message error";
-
-        message.style.display =
-            "block";
-
-        return;
-
-    }
-
-
-    message.textContent =
-        "Deposit request created for " +
-        selectedPlan +
-        ". Connect the backend/payment provider to process it.";
-
-    message.className =
-        "message success";
-
-    message.style.display =
-        "block";
-
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+let selectedPlan="";
+function selectPlan(element,plan){document.querySelectorAll(".plan").forEach(function(x){x.classList.remove("selected")});element.classList.add("selected");selectedPlan=plan;document.getElementById("selectedPlan").value=plan;}
+function updateAmount(){var a=parseFloat(document.getElementById("amount").value)||0;document.getElementById("amountPreview").textContent="$"+a.toFixed(2);}
+document.getElementById("depositForm").addEventListener("submit",async function(e){
+ e.preventDefault();
+ var m=document.getElementById("message"),a=parseFloat(document.getElementById("amount").value),method=document.getElementById("paymentMode").value;
+ var s=await window.supabaseClient.auth.getUser(); if(!s.data.user){location.href="login.html";return;}
+ if(!selectedPlan||!a||!method){m.textContent="Please complete the plan, amount and payment mode.";m.className="message error";m.style.display="block";return;}
+ var ref="DEP-"+Date.now();
+ var r=await window.supabaseClient.from("deposits").insert({user_id:s.data.user.id,amount:a,method:method,status:"pending",reference:ref});
+ if(r.error){m.textContent=r.error.message;m.className="message error";m.style.display="block";return;}
+ m.textContent="Deposit request submitted successfully. It is pending review.";m.className="message success";m.style.display="block";
 });
-
-
-function openMenu(){
-
-    alert(
-        "The full navigation menu will be connected later."
-    );
-
-}
-
+function openMenu(){alert("Menu navigation will be connected next.");}
 </script>
-
 </body>
 </html>
