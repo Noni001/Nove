@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Notifications — NovaVest</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f4f7fb;color:#101828;padding-bottom:80px}
+.header{height:68px;background:#07111f;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 17px;position:sticky;top:0;z-index:10}
+.brand{font-weight:800;font-size:19px}.back{background:none;border:0;color:white;font-size:24px}
+.container{max-width:700px;margin:auto;padding:22px 15px}.title{font-size:27px;margin-bottom:5px}.sub{color:#667085;font-size:13px;margin-bottom:20px}
+.card{background:white;border:1px solid #e5eaf0;border-radius:16px;margin-bottom:12px;padding:16px}
+.card.unread{border-left:4px solid #10b981}
+.top{display:flex;justify-content:space-between;gap:12px}.top strong{font-size:14px}.time{font-size:10px;color:#98a2b3;white-space:nowrap}
+.message{color:#667085;font-size:13px;line-height:1.5;margin-top:7px}
+.empty{text-align:center;padding:50px 20px;color:#667085;background:white;border-radius:16px;border:1px solid #e5eaf0}
+button.mark{border:0;background:#e8f8f2;color:#047857;padding:9px 12px;border-radius:9px;font-weight:700;margin-top:18px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:72px;background:white;border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(4,1fr);z-index:20}
+.bottom-nav a{text-decoration:none;color:#667085;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;gap:4px}.bottom-nav a.active{color:#059669;font-weight:700}.icon{font-size:19px}
+</style>
+</head>
+<body>
+<header class="header"><button class="back" onclick="history.back()">←</button><div class="brand">NovaVest</div><span>🔔</span></header>
+<main class="container">
+<h1 class="title">Notifications</h1><p class="sub">Updates about your account and activity.</p>
+<div id="list"><div class="empty">Loading notifications...</div></div>
+</main>
+<nav class="bottom-nav">
+<a href="dashboard.html"><span class="icon">⌂</span>Home</a>
+<a href="wallet.html"><span class="icon">$</span>Wallet</a>
+<a href="transactions.html"><span class="icon">≡</span>Transactions</a>
+<a href="menu.html"><span class="icon">☰</span>Menu</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function loadNotifications(){
+ const a=await supabaseClient.auth.getUser(); if(!a.data.user){location.href="login.html";return}
+ const r=await supabaseClient.from("notifications").select("*").eq("user_id",a.data.user.id).order("created_at",{ascending:false});
+ const list=document.getElementById("list"), rows=r.data||[];
+ if(r.error){list.innerHTML='<div class="empty">Unable to load notifications.</div>';return}
+ if(!rows.length){list.innerHTML='<div class="empty">🔔<br><br>No notifications yet.</div>';return}
+ list.innerHTML=rows.map(n=>'<div class="card '+(!n.read_at?'unread':'')+'"><div class="top"><strong>'+esc(n.title||"Account update")+'</strong><span class="time">'+new Date(n.created_at).toLocaleString()+'</span></div><div class="message">'+esc(n.message||"")+'</div>'+(!n.read_at?'<button class="mark" onclick="markRead(\''+n.id+'\')">Mark as read</button>':'')+'</div>').join("");
+}
+async function markRead(id){await supabaseClient.from("notifications").update({read_at:new Date().toISOString()}).eq("id",id);loadNotifications()}
+function esc(v){return String(v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+loadNotifications();
+</script>
+</body>
+</html>
