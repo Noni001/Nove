@@ -470,7 +470,30 @@ body{
 </nav>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
+
+const supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+async function loadReferrals(){
+ const {data:{user}}=await supabaseClient.auth.getUser();
+ if(!user){location.href="login.html";return;}
+ const {data,error}=await supabaseClient.from("referrals").select("referred_user_id,bonus_amount,status,created_at").eq("referrer_id",user.id).order("created_at",{ascending:false});
+ if(error)return;
+ const rows=data||[];
+ const active=rows.filter(r=>r.status==="qualified"||r.status==="paid").length;
+ const paid=rows.filter(r=>r.status==="paid").reduce((s,r)=>s+Number(r.bonus_amount||0),0);
+ const pending=rows.filter(r=>r.status==="pending").reduce((s,r)=>s+Number(r.bonus_amount||0),0);
+ document.querySelector(".stats .stat:nth-child(1) strong").textContent=rows.length;
+ document.querySelector(".stats .stat:nth-child(2) strong").textContent=active;
+ document.querySelector(".stats .stat:nth-child(3) strong").textContent="$"+paid.toFixed(2);
+ document.querySelector(".stats .stat:nth-child(4) strong").textContent="$"+pending.toFixed(2);
+ const link=location.origin+"/register.html?ref="+encodeURIComponent(user.id);
+ document.getElementById("referralLink").value=link;
+ const empty=document.querySelector(".empty");
+ if(rows.length){empty.innerHTML=rows.map(r=>"<div style=\"padding:12px 0;border-bottom:1px solid #eee\"><strong>"+r.status.toUpperCase()+"</strong><div style=\"color:#6b7280;font-size:13px\">Joined "+new Date(r.created_at).toLocaleDateString()+"</div></div>").join("");}
+}
+loadReferrals();
 
 function copyReferral(){
 
