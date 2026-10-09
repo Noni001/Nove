@@ -694,10 +694,10 @@ body{
 
     <div class="notice">
 
-      <strong>Demo data:</strong>
-      The users displayed above are placeholders for the frontend.
-      In production, user records, balances, KYC status and account
-      actions will be loaded from the secure backend database.
+      <strong>Live account data:</strong>
+      User profiles are loaded from the NovaVest database.
+      Identity verification status is not yet implemented. Account
+      details reflect the records currently available.
 
     </div>
 
@@ -760,10 +760,10 @@ async function loadLiveUsers(){
  if(!a.data.user){location.href="admin-login.html";return;}
  const p=await supabaseClient.from("profiles").select("role").eq("id",a.data.user.id).single();
  if(p.error||p.data.role!=="admin"){location.href="dashboard.html";return;}
- const r=await supabaseClient.from("profiles").select("id,full_name,username,role,created_at").order("created_at",{ascending:false});
+ const r=await supabaseClient.from("profiles").select("id,full_name,role,created_at").order("created_at",{ascending:false});
  const list=document.getElementById("userList");
  if(r.error||!list)return;
- list.innerHTML=(r.data||[]).map(u=>'<div class="user-card"><div class="user-top"><div class="avatar">'+((u.full_name||u.username||"U").slice(0,2).toUpperCase())+'</div><div class="user-info"><div class="user-name">'+(u.full_name||"Investor")+'</div><div class="username">@'+(u.username||"user")+'</div><div class="user-email">'+u.id+'</div></div><span class="status active">'+(u.role||"user").toUpperCase()+'</span></div><div class="user-details"><div class="detail"><div class="detail-label">ROLE</div><div class="detail-value">'+(u.role||"user")+'</div></div><div class="detail"><div class="detail-label">MEMBER SINCE</div><div class="detail-value">'+new Date(u.created_at).toLocaleDateString()+'</div></div></div></div>').join("");
+ list.innerHTML=(r.data||[]).map(u=>'<div class="user-card"><div class="user-top"><div class="avatar">'+((u.full_name||"U").slice(0,2).toUpperCase())+'</div><div class="user-info"><div class="user-name">'+(u.full_name||"Investor")+'</div><div class="username">@'+(u.id.slice(0,8))+'</div><div class="user-email">'+u.id+'</div></div><span class="status active">'+(u.role||"user").toUpperCase()+'</span></div><div class="user-details"><div class="detail"><div class="detail-label">ROLE</div><div class="detail-value">'+(u.role||"user")+'</div></div><div class="detail"><div class="detail-label">MEMBER SINCE</div><div class="detail-value">'+new Date(u.created_at).toLocaleDateString()+'</div></div></div></div>').join("");
 }
 loadLiveUsers();
 
@@ -826,7 +826,7 @@ function filterUsers(){
 
     const searchable =
       user
-        .getAttribute("data-search")
+        .(getAttribute("data-search") || user.innerText || "")
         .toLowerCase();
 
     const status =
@@ -908,7 +908,7 @@ function logoutAdmin(){
 
   if(confirmed){
 
-    localStorage.removeItem("nova_admin_session");
+    supabaseClient.auth.signOut();
 
     window.location.href =
       "admin-login.html";
