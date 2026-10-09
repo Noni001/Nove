@@ -826,8 +826,8 @@ async function loadDashboard(){
  badge.style.display=n.data?.length?"flex":"none";
  document.querySelector(".status").innerHTML="<strong>Account connected</strong><br>Your NovaVest account is securely connected to your account data.";
 }
-function openMenu(){alert("Menu navigation will be connected next.");}
-function supportMessage(){alert("Support will be connected next.");}
+function openMenu(){window.location.href="menu.html";}
+function supportMessage(){window.location.href="support.html";}
 loadDashboard();
 </script>
 
