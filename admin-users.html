@@ -825,8 +825,7 @@ function filterUsers(){
   users.forEach(function(user){
 
     const searchable =
-      user
-        .(getAttribute("data-search") || user.innerText || "")
+      (user.getAttribute("data-search") || user.innerText || "")
         .toLowerCase();
 
     const status =
