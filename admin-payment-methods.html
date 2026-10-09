@@ -2,7 +2,34 @@
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Deposit Methods — NovaVest Admin</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fa;color:#0d1b2a}.top{background:#0a111e;color:#fff;padding:18px;display:flex;justify-content:space-between;align-items:center}.top a{color:#10b981;text-decoration:none}.wrap{max-width:1000px;margin:24px auto;padding:0 15px}.intro,.method{background:#fff;border-radius:14px;padding:18px;margin-bottom:15px;box-shadow:0 4px 18px #0000000a}.intro h1{margin:0 0 8px;font-size:24px}.muted{color:#64748b;font-size:13px;line-height:1.5}.method h2{font-size:17px;margin:0}.method-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.field{margin:12px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field textarea{width:100%;padding:12px;border:1px solid #dbe2ea;border-radius:9px;font:inherit;font-size:14px}.field textarea{min-height:78px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.toggle{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:700}.btn{background:#059669;color:#fff;border:0;border-radius:9px;padding:13px 17px;font-weight:700;cursor:pointer}.btn:disabled{opacity:.6}.status{display:none;padding:12px;border-radius:9px;margin:12px 0;font-size:13px}.note{background:#fffbeb;color:#92400e;padding:12px;border-radius:9px;font-size:12px;line-height:1.5;margin:12px 0}@media(max-width:620px){.grid{grid-template-columns:1fr}.wrap{margin:15px auto}.method{padding:14px}}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script></head>
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+<script>
+(function(){
+  const client = window.supabase.createClient(window.NOVAVEST_SUPABASE_URL, window.NOVAVEST_SUPABASE_KEY);
+  window.supabaseClient = client;
+  window.novaRequireAdmin = async function(){
+    try{
+      const {data:{user},error:authError} = await client.auth.getUser();
+      if(authError || !user){ window.location.replace("admin-login.html"); return null; }
+      const {data:profile,error:profileError} = await client.from("profiles").select("role").eq("id",user.id).maybeSingle();
+      if(profileError || profile?.role !== "admin"){
+        await client.auth.signOut();
+        window.location.replace("admin-login.html");
+        return null;
+      }
+      return user;
+    }catch(_){
+      window.location.replace("admin-login.html");
+      return null;
+    }
+  };
+  document.documentElement.style.visibility = "hidden";
+  document.addEventListener("DOMContentLoaded", async function(){
+    const user = await window.novaRequireAdmin();
+    if(user) document.documentElement.style.visibility = "visible";
+  });
+})();
+</script></head>
 <body><header class="top"><strong>NovaVest <span style="color:#10b981">ADMIN</span></strong><a href="admin.html">← Admin dashboard</a></header>
 <main class="wrap"><section class="intro"><h1>Deposit payment methods</h1><p class="muted">Enable the methods you support and save the payment details customers should use. Users will see enabled methods on the Deposit page. Deposit requests remain pending until an administrator verifies payment.</p><div class="note">Security: never enter a wallet seed phrase, private key, password, or secret API key here. A payment gateway requires a provider checkout link or a separately integrated gateway; entering a name alone does not process card payments.</div><div id="status" class="status"></div></section>
 <form id="methodsForm">
