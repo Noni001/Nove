@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Login - NovaVest</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 
 <style>
 *{
@@ -305,74 +307,74 @@ input:focus{
 <script>
 
 function togglePassword(){
-
-  const password =
-    document.getElementById("password");
-
-  const button =
-    document.getElementById("toggleButton");
-
-  if(password.type === "password"){
-
-    password.type = "text";
-    button.textContent = "🙈";
-
-  }else{
-
-    password.type = "password";
-    button.textContent = "👁";
-
-  }
-
+  const password = document.getElementById("password");
+  const button = document.getElementById("toggleButton");
+  if(password.type === "password"){ password.type = "text"; button.textContent = "🙈"; }
+  else { password.type = "password"; button.textContent = "👁"; }
 }
 
+const supabaseClient = window.supabase.createClient(
+  window.NOVAVEST_SUPABASE_URL,
+  window.NOVAVEST_SUPABASE_KEY
+);
+const form = document.getElementById("adminLoginForm");
+const message = document.getElementById("message");
+const submitButton = form.querySelector('button[type="submit"]');
 
-document
-.getElementById("adminLoginForm")
-.addEventListener("submit", function(event){
+function showMessage(text, ok=false){
+  message.className = "message " + (ok ? "success" : "error");
+  message.textContent = text;
+  message.style.display = "block";
+}
 
+form.addEventListener("submit", async function(event){
   event.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || !password){ showMessage("Enter your administrator email and password."); return; }
 
-  const email =
-    document.getElementById("email").value.trim();
+  submitButton.disabled = true;
+  submitButton.textContent = "Signing in…";
+  message.style.display = "none";
 
-  const password =
-    document.getElementById("password").value;
+  try{
+    const {data, error} = await supabaseClient.auth.signInWithPassword({email, password});
+    if(error || !data.user){
+      showMessage("Sign-in failed. Check your email and password, then try again.");
+      return;
+    }
 
-  const message =
-    document.getElementById("message");
+    const {data: profile, error: profileError} = await supabaseClient
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .maybeSingle();
 
+    if(profileError || profile?.role !== "admin"){
+      await supabaseClient.auth.signOut();
+      showMessage("This account does not have administrator access.");
+      return;
+    }
 
-  if(!email || !password){
-
-    message.className = "message error";
-
-    message.textContent =
-      "Please enter your administrator email and password.";
-
-    return;
-
+    showMessage("Authentication successful. Opening the admin dashboard…", true);
+    window.location.replace("admin.html");
+  }catch(err){
+    showMessage("Unable to sign in right now. Please try again.");
+  }finally{
+    submitButton.disabled = false;
+    submitButton.textContent = "Sign In";
   }
-
-
-  /*
-    SECURE ADMIN ACCESS
-
-    No real administrator credentials are stored
-    in this HTML file.
-
-    The production version will send these credentials
-    to the secure backend authentication API.
-  */
-
-  message.className = "message success";
-
-  message.textContent =
-    "Admin login form is ready. Secure backend authentication will be connected next.";
-
 });
 
-
+// If an authorized admin already has a valid session, skip the login form.
+(async function redirectExistingAdmin(){
+  try{
+    const {data:{user}} = await supabaseClient.auth.getUser();
+    if(!user) return;
+    const {data:profile} = await supabaseClient.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if(profile?.role === "admin") window.location.replace("admin.html");
+  }catch(_){}
+})();
 </script>
 
 </body>
