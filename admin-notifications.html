@@ -6,6 +6,33 @@
 <title>Notifications - NovaVest Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script>
+(function(){
+  const client = window.supabase.createClient(window.NOVAVEST_SUPABASE_URL, window.NOVAVEST_SUPABASE_KEY);
+  window.supabaseClient = client;
+  window.novaRequireAdmin = async function(){
+    try{
+      const {data:{user},error:authError} = await client.auth.getUser();
+      if(authError || !user){ window.location.replace("admin-login.html"); return null; }
+      const {data:profile,error:profileError} = await client.from("profiles").select("role").eq("id",user.id).maybeSingle();
+      if(profileError || profile?.role !== "admin"){
+        await client.auth.signOut();
+        window.location.replace("admin-login.html");
+        return null;
+      }
+      return user;
+    }catch(_){
+      window.location.replace("admin-login.html");
+      return null;
+    }
+  };
+  document.documentElement.style.visibility = "hidden";
+  document.addEventListener("DOMContentLoaded", async function(){
+    const user = await window.novaRequireAdmin();
+    if(user) document.documentElement.style.visibility = "visible";
+  });
+})();
+</script>
 <script>window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);</script>
 
 <style>
