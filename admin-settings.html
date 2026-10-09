@@ -372,6 +372,11 @@
       }
     }
   </style>
+<style id="novavest-inactive-settings">
+.inactive-settings-notice{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:14px 16px;line-height:1.5;font-size:13px;margin:0 0 18px}
+.setting-disabled{opacity:.58}
+.setting-disabled input,.setting-disabled select,.setting-disabled textarea{pointer-events:none}
+</style>
 </head>
 
 <body>
@@ -441,12 +446,14 @@
 
     </div>
 
+    <div class="inactive-settings-notice"><strong>Some controls are not active yet.</strong> Registration, KYC, transaction, notification, session, maintenance, currency, and contact controls below are currently display-only and do not change the live backend. The announcement and platform-mode controls are the only settings connected to the secure settings function. Do not rely on inactive switches to enforce financial or security rules.</div>
+
     <div class="settings-grid">
 
       <!-- PLATFORM SETTINGS -->
-      <section class="card">
+      <section class="card setting-disabled">
 
-        <h2>Platform Settings</h2>
+        <h2>Platform Settings <small>(display only)</small></h2>
 
         <p class="card-description">
           Basic configuration for the NovaVest platform.
@@ -485,7 +492,7 @@
 
 
       <!-- REGISTRATION -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Registration</h2>
 
@@ -539,7 +546,7 @@
 
 
       <!-- KYC -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>KYC & Verification</h2>
 
@@ -593,13 +600,12 @@
 
 
       <!-- TRANSACTIONS -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Transaction Controls</h2>
 
         <p class="card-description">
-          Configure how financial requests are handled. These controls are
-          placeholders until the secure backend is connected.
+          Configure how financial requests are handled. These controls are inactive display-only switches; no backend enforcement is connected.
         </p>
 
         <div class="setting-row">
@@ -648,7 +654,7 @@
 
 
       <!-- NOTIFICATIONS -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Notification Defaults</h2>
 
@@ -702,7 +708,7 @@
 
 
       <!-- SECURITY -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Security & Sessions</h2>
 
@@ -756,7 +762,7 @@
 
 
       <!-- SUPPORT -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Support & Contact</h2>
 
@@ -800,7 +806,7 @@
 
 
       <!-- MAINTENANCE -->
-      <section class="card">
+      <section class="card setting-disabled">
 
         <h2>Maintenance Mode</h2>
 
@@ -826,7 +832,7 @@
 
         <div class="warning">
           ⚠️ Maintenance mode should only be enabled when necessary.
-          The real backend must enforce this setting server-side.
+          This switch is display-only and does not activate maintenance mode.
         </div>
 
       </section>
@@ -863,7 +869,7 @@
 
 
       <!-- DANGER ZONE -->
-      <section class="card full">
+      <section class="card setting-disabled full">
 
         <h2>Danger Zone</h2>
 
@@ -872,8 +878,8 @@
           additional confirmation in production.
         </p>
 
-        <button class="danger-btn" onclick="clearSettings()">
-          Reset Settings
+        <button class="danger-btn" type="button" disabled aria-disabled="true">
+          Reset Settings (Unavailable)
         </button>
 
         <div class="warning">
