@@ -411,7 +411,7 @@ document.getElementById("registerForm").addEventListener("submit",async function
  if(password!==confirmPassword){message.textContent="The passwords do not match.";message.className="message error";message.style.display="block";return;}
  if(password.length<8){message.textContent="Password must contain at least 8 characters.";message.className="message error";message.style.display="block";return;}
  message.textContent="Creating your account...";message.className="message success";message.style.display="block";
- const {data,error}=await window.supabaseClient.auth.signUp({email,password,options:{data:{full_name:fullName,username,referrer_id:referralUuid}}});
+ const {data,error}=await window.supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin + "/login.html",data:{full_name:fullName,username,referrer_id:referralUuid}}});
  if(error){message.textContent=error.message;message.className="message error";return;}
  if(data.session){window.location.href="dashboard.html";return;}
  message.textContent="Account created. Check your email to confirm your account, then sign in.";
