@@ -613,7 +613,7 @@ body{
           type="search"
           id="searchInput"
           class="search"
-          placeholder="Search name, username or email..."
+          placeholder="Search name or user ID..."
           oninput="filterUsers()"
         >
 
@@ -628,37 +628,10 @@ body{
 
 
       <div class="filters">
-
-        <button
-          class="filter active"
-          onclick="setFilter('all',this)"
-        >
-          All Users
-        </button>
-
-        <button
-          class="filter"
-          onclick="setFilter('active',this)"
-        >
-          Active
-        </button>
-
-        <button
-          class="filter"
-          onclick="setFilter('kyc',this)"
-        >
-          KYC Verified
-        </button>
-
-        <button
-          class="filter"
-          onclick="setFilter('pending',this)"
-        >
-          Pending
-        </button>
-
+        <button class="filter active" onclick="setFilter('all',this)">All Accounts</button>
+        <button class="filter" onclick="setFilter('user',this)">User Accounts</button>
+        <button class="filter" onclick="setFilter('admin',this)">Administrators</button>
       </div>
-
     </section>
 
 
@@ -755,15 +728,27 @@ body{
 <script>
 
 window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+}
 async function loadLiveUsers(){
- const a=await supabaseClient.auth.getUser();
- if(!a.data.user){location.href="admin-login.html";return;}
- const p=await supabaseClient.from("profiles").select("role").eq("id",a.data.user.id).single();
- if(p.error||p.data.role!=="admin"){location.href="dashboard.html";return;}
- const r=await supabaseClient.from("profiles").select("id,full_name,role,created_at").order("created_at",{ascending:false});
+ const {data:{user},error:authError}=await supabaseClient.auth.getUser();
+ if(authError||!user){location.href="admin-login.html";return;}
+ const profile=await supabaseClient.from("profiles").select("role").eq("id",user.id).single();
+ if(profile.error||profile.data?.role!=="admin"){location.href="dashboard.html";return;}
+ const result=await supabaseClient.from("profiles").select("id,full_name,role,created_at").order("created_at",{ascending:false});
  const list=document.getElementById("userList");
- if(r.error||!list)return;
- list.innerHTML=(r.data||[]).map(u=>'<div class="user-card"><div class="user-top"><div class="avatar">'+((u.full_name||"U").slice(0,2).toUpperCase())+'</div><div class="user-info"><div class="user-name">'+(u.full_name||"Investor")+'</div><div class="username">@'+(u.id.slice(0,8))+'</div><div class="user-email">'+u.id+'</div></div><span class="status active">'+(u.role||"user").toUpperCase()+'</span></div><div class="user-details"><div class="detail"><div class="detail-label">ROLE</div><div class="detail-value">'+(u.role||"user")+'</div></div><div class="detail"><div class="detail-label">MEMBER SINCE</div><div class="detail-value">'+new Date(u.created_at).toLocaleDateString()+'</div></div></div></div>').join("");
+ if(result.error){list.innerHTML='<div class="notice">Unable to load user records. Check administrator read permissions for profiles.</div>';return;}
+ const users=result.data||[];
+ list.innerHTML=users.map(u=>{
+  const name=escapeHtml(u.full_name||"Investor");
+  const id=escapeHtml(u.id||"");
+  const role=String(u.role||"user").toLowerCase()==="admin"?"admin":"user";
+  const date=u.created_at?new Date(u.created_at).toLocaleDateString():"—";
+  const search=escapeHtml(((u.full_name||"")+" "+(u.id||"")+" "+role).toLowerCase());
+  return '<div class="user-card" data-role="'+role+'" data-search="'+search+'"><div class="user-top"><div class="avatar">'+escapeHtml((u.full_name||"U").slice(0,2).toUpperCase())+'</div><div class="user-info"><div class="user-name">'+name+'</div><div class="username">User ID</div><div class="user-email">'+id+'</div></div><span class="status '+(role==="admin"?"verified":"active")+'">'+role.toUpperCase()+'</span></div><div class="user-details"><div class="detail"><div class="detail-label">ACCOUNT ROLE</div><div class="detail-value">'+role.toUpperCase()+'</div></div><div class="detail"><div class="detail-label">MEMBER SINCE</div><div class="detail-value">'+escapeHtml(date)+'</div></div></div></div>';
+ }).join("");
+ filterUsers();
 }
 loadLiveUsers();
 
@@ -779,13 +764,7 @@ function toggleMobileMenu(){
 }
 
 
-function showNotifications(){
-
-  alert(
-    "Admin notifications will be loaded from the backend."
-  );
-
-}
+function showNotifications(){ window.location.href="admin-notifications.html"; }
 
 
 function setFilter(filter, button){
@@ -808,82 +787,16 @@ function setFilter(filter, button){
 
 
 function filterUsers(){
-
-  const search =
-    document
-      .getElementById("searchInput")
-      .value
-      .toLowerCase()
-      .trim();
-
-  const users =
-    document.querySelectorAll(".user-card");
-
-  let visible = 0;
-
-
-  users.forEach(function(user){
-
-    const searchable =
-      (user.getAttribute("data-search") || user.innerText || "")
-        .toLowerCase();
-
-    const status =
-      user.getAttribute("data-status");
-
-    const kyc =
-      user.getAttribute("data-kyc");
-
-
-    const matchesSearch =
-      searchable.includes(search);
-
-    let matchesFilter = true;
-
-
-    if(currentFilter === "active"){
-
-      matchesFilter =
-        status === "active";
-
-    }
-
-
-    if(currentFilter === "pending"){
-
-      matchesFilter =
-        status === "pending";
-
-    }
-
-
-    if(currentFilter === "kyc"){
-
-      matchesFilter =
-        kyc === "verified";
-
-    }
-
-
-    if(matchesSearch && matchesFilter){
-
-      user.style.display = "block";
-      visible++;
-
-    }else{
-
-      user.style.display = "none";
-
-    }
-
-  });
-
-
-  document
-    .getElementById("emptyState")
-    .style.display =
-      visible === 0 ? "block" : "none";
-
+ const search=document.getElementById("searchInput").value.toLowerCase().trim();
+ const users=document.querySelectorAll(".user-card");
+ let visible=0;
+ users.forEach(user=>{
+  const matchesSearch=(user.dataset.search||"").includes(search);
+  const matchesRole=currentFilter==="all"||user.dataset.role===currentFilter;
+  user.style.display=matchesSearch&&matchesRole?"block":"none";
+  if(matchesSearch&&matchesRole)visible++;
+ });
+ document.getElementById("emptyState").style.display=visible===0?"block":"none";
 }
 
 
