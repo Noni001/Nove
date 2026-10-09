@@ -835,6 +835,10 @@ body{
     ＋ &nbsp; Account Adjustments
   </a>
 
+  <a href="admin-payment-methods.html">
+    $ &nbsp; Deposit Methods
+  </a>
+
   <a href="admin-notifications.html">
     🔔 &nbsp; Notifications
   </a>
@@ -898,7 +902,7 @@ function filterTransactions(){
 async function loadLiveRequests(){
   const user=await requireAdmin(); if(!user)return;
   const [{data:deps,error:de}, {data:wds,error:we}, {data:txs,error:te}]=await Promise.all([
-    window.supabaseClient.from("deposits").select("id,user_id,amount,method,status,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}),
+    window.supabaseClient.from("deposits").select("id,user_id,amount,method,status,reference,payment_reference,payment_details_snapshot,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}),
     window.supabaseClient.from("withdrawals").select("id,user_id,amount,method,destination,status,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}),
     window.supabaseClient.from("transactions").select("id,user_id,type,amount,status,description,reference,created_at,profiles(full_name,phone)").order("created_at",{ascending:false}).limit(100)
   ]);
@@ -921,7 +925,7 @@ async function loadLiveRequests(){
           <button class="action-button view" onclick="viewLive('${x.id}')">Details</button>
         </div>`
       : `<div class="actions"><button class="action-button view" onclick="viewLive('${x.id}')">Details</button></div>`;
-    return `<div class="transaction-card" data-search="${escapeHtml((name+" "+x.user_id+" "+(x.reference||"")+" "+x.display_type+" "+(x.description||"")).toLowerCase())}" data-type="${x.record_type}" data-status="${x.status}">
+    return `<div class="transaction-card" data-search="${escapeHtml((name+" "+x.user_id+" "+(x.reference||"")+" "+(x.payment_reference||"")+" "+x.display_type+" "+(x.description||"")).toLowerCase())}" data-type="${x.record_type}" data-status="${x.status}">
       <div class="transaction-top">
         <div><div class="transaction-title">${escapeHtml(x.display_type)}</div><div class="transaction-meta">${escapeHtml(name)} • ${new Date(x.created_at).toLocaleString()}</div></div>
         <div class="transaction-amount ${x.record_type==="withdrawal"?"negative":"positive"}">${signed}$${amount}</div>
@@ -930,6 +934,7 @@ async function loadLiveRequests(){
         <div class="detail"><div class="detail-label">Status</div><div class="detail-value"><span class="status ${x.status}">${escapeHtml(x.status.toUpperCase())}</span></div></div>
         <div class="detail"><div class="detail-label">Reference</div><div class="detail-value">${escapeHtml(x.reference||"—")}</div></div>
         <div class="detail"><div class="detail-label">Method</div><div class="detail-value">${escapeHtml(x.method||"Ledger")}</div></div>
+        ${x.record_type==="deposit"?`<div class="detail"><div class="detail-label">User payment reference</div><div class="detail-value">${escapeHtml(x.payment_reference||"Not provided")}</div></div>`:""}
       </div>
       ${actions}
     </div>`;
@@ -954,7 +959,7 @@ async function reviewLive(type,id,action){
 
 function viewLive(id){
   const x=liveRequests.find(v=>v.id===id); if(!x)return;
-  alert("Record ID: "+x.id+"\nUser: "+(x.profiles?.full_name||"User")+"\nAmount: $"+Number(x.amount||0).toFixed(2)+"\nStatus: "+x.status+"\nReference: "+(x.reference||"—"));
+  alert("Record ID: "+x.id+"\nUser: "+(x.profiles?.full_name||"User")+"\nAmount: $"+Number(x.amount||0).toFixed(2)+"\nStatus: "+x.status+"\nRequest reference: "+(x.reference||"—")+"\nPayment reference: "+(x.payment_reference||"Not provided")+"\nPayment details at request: "+JSON.stringify(x.payment_details_snapshot||{}));
 }
 
 async function logoutAdmin(){
