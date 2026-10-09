@@ -713,34 +713,24 @@ select:focus{
 
 
             <div class="field">
-
-                <label for="paymentMode">
-                    Payment mode
-                </label>
-
+                <label for="paymentMode">Payment method</label>
                 <select id="paymentMode" required>
-
-                    <option value="">
-                        Select payment mode
-                    </option>
-
-                    <option value="Bank Transfer">
-                        Bank Transfer
-                    </option>
-
-                    <option value="Card">
-                        Card
-                    </option>
-
-                    <option value="Crypto">
-                        Cryptocurrency
-                    </option>
-
+                    <option value="">Loading enabled payment methods…</option>
                 </select>
-
+                <div class="helper">Only payment methods configured by the administrator are available.</div>
             </div>
-
-
+            <div id="paymentInstructions" class="field" style="display:none;border:1px solid #dbe3ec;border-radius:12px;padding:14px;background:#f8fafc">
+                <strong id="paymentMethodTitle"></strong>
+                <div id="paymentDetails" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:9px;font-size:14px"></div>
+                <div id="paymentMethodInstructions" style="white-space:pre-wrap;margin-top:9px;font-size:13px;color:#526174"></div>
+                <a id="gatewayLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:12px;color:#047857;font-weight:700">Open secure payment page ↗</a>
+                <button id="copyPaymentDetails" type="button" style="display:none;margin-top:10px;padding:9px 12px;border:0;border-radius:8px;background:#e2e8f0">Copy payment details</button>
+            </div>
+            <div class="field">
+                <label for="paymentReference">Payment transaction reference (if available)</label>
+                <input type="text" id="paymentReference" maxlength="200" placeholder="Enter transaction ID / transfer reference">
+                <div class="helper">Submit your payment reference after paying. Your deposit stays pending until verified.</div>
+            </div>
             <div class="amount-preview">
 
                 <span>
@@ -831,20 +821,59 @@ select:focus{
 
 <script>
 window.supabaseClient=window.supabase.createClient(window.NOVAVEST_SUPABASE_URL,window.NOVAVEST_SUPABASE_KEY);
-let selectedPlan="";
-function selectPlan(element,plan){document.querySelectorAll(".plan").forEach(function(x){x.classList.remove("selected")});element.classList.add("selected");selectedPlan=plan;document.getElementById("selectedPlan").value=plan;}
-function updateAmount(){var a=parseFloat(document.getElementById("amount").value)||0;document.getElementById("amountPreview").textContent="$"+a.toFixed(2);}
+let selectedPlan="",enabledPaymentMethods=[];
+const paymentMode=document.getElementById("paymentMode");
+function showMessage(message,kind){const m=document.getElementById("message");m.textContent=message;m.className="message "+kind;m.style.display="block";}
+function selectPlan(element,plan){document.querySelectorAll(".plan").forEach(x=>x.classList.remove("selected"));element.classList.add("selected");selectedPlan=plan;document.getElementById("selectedPlan").value=plan;}
+function updateAmount(){const a=parseFloat(document.getElementById("amount").value)||0;document.getElementById("amountPreview").textContent="$"+a.toFixed(2);}
+function selectedMethod(){return enabledPaymentMethods.find(x=>x.id===paymentMode.value);}
+function renderPaymentDetails(){
+ const method=selectedMethod(),box=document.getElementById("paymentInstructions"),details=document.getElementById("paymentDetails"),instructions=document.getElementById("paymentMethodInstructions"),link=document.getElementById("gatewayLink"),copy=document.getElementById("copyPaymentDetails");
+ if(!method){box.style.display="none";return;}
+ box.style.display="block";document.getElementById("paymentMethodTitle").textContent=method.name||"Payment details";
+ let text="";
+ if(method.id==="crypto")text=[method.network?"Coin / network: "+method.network:"",method.details?"Wallet address: "+method.details:""].filter(Boolean).join("\n");
+ if(method.id==="bank")text=[method.bankName?"Bank: "+method.bankName:"",method.accountName?"Account name: "+method.accountName:"",method.accountNumber?"Account number: "+method.accountNumber:""].filter(Boolean).join("\n");
+ if(method.id==="gateway")text=method.provider?"Provider: "+method.provider:"Use the secure checkout link below.";
+ details.textContent=text||"Follow the instructions below.";
+ instructions.textContent=method.instructions||"After paying, submit your transaction reference. This request will remain pending until verified.";
+ if(method.id==="gateway"&&method.url){link.href=method.url;link.style.display="inline-block";}else{link.removeAttribute("href");link.style.display="none";}
+ copy.style.display=(method.id==="crypto"&&method.details)||(method.id==="bank"&&(method.accountNumber||method.accountName))?"inline-block":"none";
+}
+document.getElementById("copyPaymentDetails").addEventListener("click",async()=>{
+ const method=selectedMethod();if(!method)return;
+ const text=method.id==="crypto"?method.details:method.id==="bank"?[method.bankName,method.accountName,method.accountNumber].filter(Boolean).join("\n"):"";
+ if(!text)return;
+ try{await navigator.clipboard.writeText(text);showMessage("Payment details copied. Check the network/account details before sending.","success");}
+ catch{showMessage("Copy is unavailable in this browser. Please select and copy the payment details manually.","error");}
+});
+paymentMode.addEventListener("change",renderPaymentDetails);
+async function loadPaymentMethods(){
+ paymentMode.innerHTML='<option value="">Select payment method</option>';
+ const {data,error}=await window.supabaseClient.from("site_settings").select("value").eq("key","deposit_payment_methods").maybeSingle();
+ if(error){paymentMode.innerHTML='<option value="">Payment methods unavailable</option>';showMessage("Could not load payment methods. Please refresh or contact support.","error");return;}
+ enabledPaymentMethods=(data?.value?.methods||[]).filter(m=>m.enabled===true);
+ enabledPaymentMethods.forEach(method=>{const option=document.createElement("option");option.value=method.id;option.textContent=method.name||method.type;paymentMode.appendChild(option);});
+ if(!enabledPaymentMethods.length){paymentMode.innerHTML='<option value="">No payment methods currently available</option>';showMessage("No deposit methods are enabled yet. Please try again later or contact support.","error");}
+}
 document.getElementById("depositForm").addEventListener("submit",async function(e){
  e.preventDefault();
- var m=document.getElementById("message"),a=parseFloat(document.getElementById("amount").value),method=document.getElementById("paymentMode").value;
- var s=await window.supabaseClient.auth.getUser(); if(!s.data.user){location.href="login.html";return;}
- if(!selectedPlan||!a||!method){m.textContent="Please complete the plan, amount and payment mode.";m.className="message error";m.style.display="block";return;}
- var ref="DEP-"+Date.now();
- var r=await window.supabaseClient.from("deposits").insert({user_id:s.data.user.id,amount:a,method:method,status:"pending",reference:ref});
- if(r.error){m.textContent=r.error.message;m.className="message error";m.style.display="block";return;}
- m.textContent="Deposit request submitted successfully. It is pending review.";m.className="message success";m.style.display="block";
+ const amount=parseFloat(document.getElementById("amount").value),method=selectedMethod(),reference=document.getElementById("paymentReference").value.trim();
+ const {data:{user},error:authError}=await window.supabaseClient.auth.getUser();
+ if(authError||!user){location.href="login.html";return;}
+ if(!selectedPlan||!Number.isFinite(amount)||amount<=0||!method){showMessage("Please select a plan, enter a valid amount and choose an available payment method.","error");return;}
+ if(method.id==="crypto"&&!method.details){showMessage("This crypto wallet is not fully configured yet. Please contact support.","error");return;}
+ if(method.id==="bank"&&(!method.bankName||!method.accountName||!method.accountNumber)){showMessage("Bank transfer details are incomplete. Please contact support.","error");return;}
+ if(method.id==="gateway"&&!method.url){showMessage("The payment gateway is not configured yet. Please contact support.","error");return;}
+ const requestReference="DEP-"+Date.now()+"-"+Math.random().toString(36).slice(2,7).toUpperCase();
+ const snapshot={id:method.id,name:method.name,type:method.type,network:method.network||null,details:method.details||null,bankName:method.bankName||null,accountName:method.accountName||null,accountNumber:method.accountNumber||null,provider:method.provider||null,url:method.url||null};
+ const {error}=await window.supabaseClient.from("deposits").insert({user_id:user.id,amount,method:method.name,status:"pending",reference:requestReference,payment_reference:reference||null,payment_details_snapshot:snapshot});
+ if(error){showMessage("Could not submit your deposit request: "+error.message,"error");return;}
+ showMessage("Deposit request submitted and marked Pending. Only pay using the details shown above. Your account will not be credited until the payment is verified by an administrator.","success");
+ document.getElementById("paymentReference").value="";
 });
 function openMenu(){alert("Menu navigation will be connected next.");}
+loadPaymentMethods();
 </script>
 </body>
 </html>
